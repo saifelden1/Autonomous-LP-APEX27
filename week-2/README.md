@@ -1,97 +1,71 @@
-# Week 2: Custom Interfaces, Services, Actions & Launch Files
+# Week 2: Robot Modeling (URDF/Xacro), TF Tree & RViz Visualization
 
-In Week 1, you learned how nodes pass data continuously using topics. However, autonomous vehicles need more than just one-way streams:
-* When a vehicle starts a race or Mars Yard traverse, it needs a **Mission Goal** that reports progress and can be canceled (**Actions**).
-* When a human hits an emergency stop or requests a sensor reset, it needs an immediate acknowledgment (**Services**).
-* When changing driving parameters across 10 nodes at once, it needs **Launch Files** and **Parameters**.
+Welcome to Week 2! This week is all about **robot geometry and coordinate frames**. You will learn how to describe physical robots in code and inspect them visually in RViz.
 
 ---
 
-## 1. Custom ROS 2 Interfaces (.msg, .srv, .action)
+## 1. What is URDF & Xacro?
 
-ROS 2 communicates using strictly typed data structures. When built-in messages (`std_msgs`, `geometry_msgs`) are not enough, we define custom interfaces.
+* **URDF (Unified Robot Description Format)**: An XML standard describing rigid bodies (**Links**) and the mechanical pivots connecting them (**Joints**).
+* **Xacro (XML Macros)**: Adds variables, math, and reusable templates to URDF so you don't repeat XML blocks.
 
 ```
-apex_mission_interfaces/
-├── msg/
-│   └── RoverStatus.msg       # Custom data fields
-├── srv/
-│   └── TriggerEStop.srv      # Request ---> Response
-└── action/
-    └── MissionTraverse.action # Goal ---> Feedback ... Feedback ---> Result
++-----------------------------------------------------------+
+|                          chassis                          |
+|                     (Root Body Link)                      |
++-----------------------------------------------------------+
+        │                                           │
+  (Continuous Joint)                          (Continuous Joint)
+        │                                           │
+        ▼                                           ▼
++-----------------------+                   +-----------------------+
+|  front_left_wheel     |                   |  front_right_wheel    |
++-----------------------+                   +-----------------------+
 ```
 
-### Anatomy of an Action Definition (`.action`)
-Actions are split into three parts separated by `---`:
-```text
-# 1. Goal (What the client requests)
-geometry_msgs/Point[] target_waypoints
-float32 target_speed
+### Key Elements of a `<link>`:
+1. `<visual>`: Shape, dimensions, and colors for rendering in RViz.
+2. `<collision>`: Simplified bounding shapes used by physics simulators for collision checks.
+3. `<inertial>`: Mass and moments of inertia.
 
 ---
-# 2. Result (Returned when the goal finishes or cancels)
-bool success
-float32 total_time_sec
-int32 waypoints_completed
 
----
-# 3. Feedback (Sent continuously during execution)
-int32 current_waypoint_index
-float32 distance_to_next_waypoint
-string current_state
+## 2. The TF2 Coordinate Tree & REP-105 Standard
+
+Every sensor and wheel has its own coordinate frame. The **TF2 library** keeps track of where each frame is relative to `base_link` (the center of the vehicle):
+
+```
+base_link (Center of vehicle)
+ ├── chassis
+ ├── front_left_wheel
+ ├── front_right_wheel
+ ├── lidar_link
+ └── camera_link
 ```
 
----
-
-## 2. Topic vs Service vs Action: When to Use What?
-
-| Pattern | Type | Communication Model | Formula AI / ERC Example |
-| :--- | :--- | :--- | :--- |
-| **Topic** | Unidirectional, 1-to-many | Continuous stream without response | LiDAR point clouds, Camera frames, `/cmd_vel` |
-| **Service** | Bidirectional, 1-to-1 | Instant Request/Response (blocking or async) | Calibrate IMU, Reset odometry, Toggle headlights |
-| **Action** | Bidirectional, 1-to-1 | Long-running goal with periodic feedback & cancel | Drive 20-meter cone slalom, Traverse to Mars crater |
-
----
-
-## 3. ROS 2 Parameters & Dynamic Reconfiguration
-
-Parameters are node-level configuration values. Instead of hardcoding numbers inside Python code:
-```python
-# Declare parameter with default value
-self.declare_parameter('max_velocity', 2.5)
-
-# Read parameter value
-max_vel = self.get_parameter('max_velocity').get_parameter_value().double_value
-```
-
-Parameters can be loaded from a YAML configuration file or overridden via the command line:
+Tools to inspect frames:
 ```bash
-ros2 run apex_mission_pkg mission_server --ros-args -p max_velocity:=3.0
+# View live coordinates between two frames
+ros2 run tf2_ros tf2_echo base_link lidar_link
+
+# Generate a visual PDF map of the whole tree
+ros2 run tf2_tools view_frames
 ```
 
 ---
 
-## 4. Python Launch Systems (`launch.py`)
+## 3. Visualizing in RViz2 with GUI Controls
 
-In production robotics, you never open 15 terminal windows to start 15 nodes. You write a **Launch File** that launches nodes with parameters, namespaces, and arguments together.
+We use two standard nodes to display the robot:
+* `robot_state_publisher`: Reads the URDF XML and broadcasts the 3D transforms.
+* `joint_state_publisher_gui`: A GUI window with slider bars that let you manually turn the wheels to test joint movement.
 
-Example `mission.launch.py`:
-```python
-from launch import LaunchDescription
-from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+---
 
-def generate_launch_description():
-    return LaunchDescription([
-        DeclareLaunchArgument('max_speed', default_value='2.0'),
-        
-        Node(
-            package='apex_mission_pkg',
-            executable='mission_server',
-            name='mission_coordinator',
-            output='screen',
-            parameters=[{'max_velocity': LaunchConfiguration('max_speed')}]
-        )
-    ])
-```
+## ⚠️ Top 3 AI Hallucination Traps for Week 2
+
+When asking AI (ChatGPT/Claude) for URDF and TF code, watch out for these 3 common hallucinations:
+
+1. **Swapping Parent and Child Frames**: AI frequently swaps `<parent>` and `<child>` tags inside joints (e.g. setting `camera_link` as the parent of `chassis`). This breaks the tree hierarchy because each link can only have **one** parent.
+2. **The Cylinder Orientation Bug**: In URDF, cylinders are aligned along the **Z-axis** by default. To make a cylinder function as a vehicle wheel spinning along the Y-axis, an explicit roll rotation `<origin rpy="1.5708 0 0"/>` is required. AI frequently forgets this, creating wheels that slide on their flat faces!
+3. **Invalid Zero Quaternions**: When generating orientation code, AI sometimes defaults quaternion orientation to `(x=0, y=0, z=0, w=0)`. A valid quaternion must always be normalized to length 1.0 (an identity quaternion is `w=1.0, x=0, y=0, z=0`). A zero quaternion will crash RViz transform processing.

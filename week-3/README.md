@@ -1,88 +1,45 @@
-# Week 3: Kinematics, URDF/Xacro 3D Modeling & TF2 Coordinate Frames
+# Week 3: Gazebo Simulation, Sensor Physics & World Creation
 
-In Weeks 1 & 2, you mastered the computational layer. Now we enter **3D spatial robotics**: Where is the vehicle in the world? Where is the camera mounted relative to the front axle? How does the vehicle move through space?
-
----
-
-## 1. Coordinate Frames & ROS REP-105 Standard
-
-Every autonomous robot must adhere to the **REP-105 coordinate standard**. If coordinate frames are inverted or disconnected, SLAM, Nav2, and perception will fail completely.
-
-```
-       map (Global World Frame - SLAM / GPS)
-        │
-        ▼ (Dynamic transform: corrected by SLAM / RTAB-Map)
-       odom (Smooth Local Odometry Frame - Continuous, no jumps)
-        │
-        ▼ (Dynamic transform: published by wheel encoders + IMU / EKF)
-    base_link (Center of vehicle chassis / Kinematic center)
-        │
-   ┌────┴───────────────────────────┬───────────────────────────┐
-   ▼                                ▼                           ▼
-left_wheel_link               right_wheel_link              camera_link
-(Continuous joint)            (Continuous joint)                 │
-                                                                 ▼
-                                                    camera_optical_frame
-                                                 (Z forward, X right, Y down)
-```
-
-### Critical Rules:
-1. **Never Duplicate TF Publishers**: Each frame in the tree can only have **one parent**.
-2. **Optical vs Body Frames**: Cameras use the optical standard ($Z$ forward, $X$ right, $Y$ down), while mobile robots use standard body frames ($X$ forward, $Y$ left, $Z$ up).
+Welcome to Week 3! Now that we have a 3D robot model, we step into **Physics Simulation**. In this module, you learn how simulated worlds are built and how physical sensors are modeled.
 
 ---
 
-## 2. URDF & Xacro: Modeling 3D Robots
+## 1. What is Gazebo?
 
-* **URDF (Unified Robot Description Format)**: An XML file describing robot links (bodies) and joints (connections).
-* **Xacro (XML Macros)**: Adds variables, mathematical formulas, and reusable components to URDF so you don't copy-paste XML blocks.
-
-### The Three Pillars of a `<link>`:
-```xml
-<link name="chassis">
-  <!-- 1. Visual: How it looks in RViz/Gazebo (colors, CAD meshes) -->
-  <visual>
-    <geometry>
-      <box size="0.6 0.4 0.2"/>
-    </geometry>
-    <material name="apex_orange">
-      <color rgba="1.0 0.4 0.0 1.0"/>
-    </material>
-  </visual>
-
-  <!-- 2. Collision: Simplified geometry used by physics engines for collision detection -->
-  <collision>
-    <geometry>
-      <box size="0.6 0.4 0.2"/>
-    </geometry>
-  </collision>
-
-  <!-- 3. Inertial: Mass and moments of inertia (required for physics simulation) -->
-  <inertial>
-    <mass value="15.0"/>
-    <inertia ixx="0.25" ixy="0.0" ixz="0.0" iyy="0.45" iyz="0.0" izz="0.65"/>
-  </inertial>
-</link>
-```
+While RViz only renders what ROS 2 tells it to display, **Gazebo** is a real-world physics engine:
+* It simulates **mass, gravity, momentum, and friction**.
+* It simulates **collisions** between solid objects.
+* It simulates **photons and lasers** bouncing off obstacles to generate realistic sensor streams.
 
 ---
 
-## 3. Dynamic vs Static Transforms in TF2
+## 2. Robotics Sensor Types Explained
 
-* **Static Transforms**: Relationships that never move (e.g., `base_link ➔ lidar_link` or `base_link ➔ camera_link`). Broadcasted once by `tf2_ros.StaticTransformBroadcaster`.
-* **Dynamic Transforms**: Relationships that change continuously as the vehicle moves (e.g., `odom ➔ base_link`). Broadcasted at 20–50 Hz by `tf2_ros.TransformBroadcaster`.
+Autonomous vehicles rely on a suite of complementary sensors:
+
+| Sensor Type | Physical Working Principle | Formula AI & ERC Relevance | ROS 2 Message Type |
+| :--- | :--- | :--- | :--- |
+| **2D LiDAR** | Emits rotating laser pulses; measures time-of-flight distance. | Fast 360° obstacle detection and 2D track boundary scanning. | `sensor_msgs/msg/LaserScan` |
+| **RGB Camera** | Collects light through lenses onto a CMOS sensor grid. | Color cone detection (Yellow/Blue) and ArUco marker tracking. | `sensor_msgs/msg/Image` |
+| **IMU (Inertial Unit)** | Micro-electromechanical (MEMS) gyroscopes & accelerometers. | High-frequency angular yaw rate and vehicle acceleration. | `sensor_msgs/msg/Imu` |
+| **Wheel Encoders** | Hall-effect sensors counting wheel shaft rotations. | Dead-reckoning odometry velocity calculation. | `nav_msgs/msg/Odometry` |
 
 ---
 
-## 4. Visualizing in RViz2
+## 3. Creating a Custom Gazebo World (`.world`)
 
-RViz (ROS Visualization) allows you to inspect sensor rays, transforms, point clouds, and robot models in real-time.
+A Gazebo world is defined in an XML-based **SDF (Simulation Description Format)** file. A minimal world requires:
+1. Physics engine settings (`<physics>`).
+2. A ground plane (`<include><uri>model://ground_plane</uri></include>`).
+3. Sunlight illumination (`<include><uri>model://sun</uri></include>`).
+4. Custom arena walls and obstacles (`<model name="wall_1">`).
 
-```bash
-# Sourcing and launching RViz display
-ros2 launch apex_robot_description display_rviz.launch.py
-```
-Inside RViz:
-1. Set **Fixed Frame** to `odom` or `base_link`.
-2. Add the **RobotModel** display.
-3. Add the **TF** display to inspect frame axes (Red = X, Green = Y, Blue = Z).
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 3
+
+When asking AI (ChatGPT/Claude) for Gazebo worlds and plugins, watch out for these 3 common hallucinations:
+
+1. **Deprecated Gazebo Classic vs Gazebo Sim Tags**: AI constantly confuses Gazebo Classic (plugins ending in `.so`, like `libgazebo_ros_ray_sensor.so`) with modern Ignition/Gz Sim (using system plugins `<plugin filename="ignition-gazebo-sensors-system">`). Using the wrong syntax causes Gazebo to ignore the plugin completely without any error message!
+2. **Missing SDF Sunlight & Ground**: When asked to generate a `.world` file, AI frequently forgets the `<include><uri>model://sun</uri></include>` and `<include><uri>model://ground_plane</uri></include>` tags. The result is a completely pitch-black screen where spawned robots fall into an infinite abyss.
+3. **Massless Links in Physics Simulation**: In RViz, links do not need mass. In Gazebo, any link connected via a non-fixed joint or equipped with collision geometry must have a positive `<mass>` and valid moments of inertia. If mass is zero, Gazebo will crash on startup with a physics solver division-by-zero error.

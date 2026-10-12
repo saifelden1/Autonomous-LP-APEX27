@@ -1,90 +1,60 @@
-# Week 4: Gazebo Simulation, Sensor Plugins & Closed-Loop Control
+# Week 4: Model Deployment in Gazebo & Sensor Streaming into RViz
 
-In Week 3, you saw your vehicle in RViz. However, RViz is merely a visualizer—it has no gravity, no wheel friction, no inertia, and no collisions. 
-
-This week, we bridge our robot into **Gazebo**, a realistic 3D rigid-body physics simulator.
+Welcome to Week 4! This week brings everything together: you deploy your robot model into the Gazebo arena, drive it with teleoperation, stream live sensors into RViz, and inspect the computational graph with `rqt_graph`.
 
 ---
 
-## 1. RViz vs Gazebo: The Fundamental Difference
+## 1. The Simulation-to-Visualization Bridge
 
-| Feature | RViz2 | Gazebo Sim |
-| :--- | :--- | :--- |
-| **Role** | **Visualization tool** (What the robot thinks it sees) | **World simulator** (The ground truth physical world) |
-| **Physics** | None (Visual only) | Rigid-body dynamics, mass, friction, gravity |
-| **Sensors** | Displays received sensor topics | Simulates photons, laser reflections, noise, and IMU drift |
-| **Actuation** | Cannot drive unless TF is broadcasted | Drives wheels when torque / velocity commands arrive |
+Here is the exact data pipeline running between Gazebo, ROS 2, and RViz:
 
----
-
-## 2. Gazebo Plugins: Bringing Hardware to Life
-
-To make Gazebo talk to ROS 2, we attach `<gazebo>` plugin tags inside our Xacro model.
-
-### 1. Differential / Skid-Steer Drive Plugin
-Simulates the wheel motors and listens to `/cmd_vel` (`geometry_msgs/msg/Twist`):
-```xml
-<gazebo>
-  <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
-    <ros>
-      <namespace>/</namespace>
-      <remapping>cmd_vel:=cmd_vel</remapping>
-      <remapping>odom:=wheel/odom</remapping>
-    </ros>
-    <left_joint>rear_left_wheel_joint</left_joint>
-    <right_joint>rear_right_wheel_joint</right_joint>
-    <wheel_separation>0.46</wheel_separation>
-    <wheel_diameter>0.20</wheel_diameter>
-    <publish_odom>true</publish_odom>
-    <publish_odom_tf>false</publish_odom_tf> <!-- Handled by EKF in real rovers! -->
-  </plugin>
-</gazebo>
 ```
-
-### 2. 2D LiDAR Ray Sensor Plugin
-Simulates a rotating laser scanner and publishes `sensor_msgs/msg/LaserScan` on `/scan`:
-```xml
-<gazebo reference="lidar_link">
-  <sensor name="lidar" type="ray">
-    <always_on>true</always_on>
-    <update_rate>10.0</update_rate>
-    <ray>
-      <scan>
-        <horizontal>
-          <samples>360</samples>
-          <min_angle>-3.14159</min_angle>
-          <max_angle>3.14159</max_angle>
-        </horizontal>
-      </scan>
-      <range>
-        <min>0.12</min>
-        <max>10.0</max>
-      </range>
-    </ray>
-    <plugin name="lidar_plugin" filename="libgazebo_ros_ray_sensor.so">
-      <ros>
-        <remapping>~/out:=scan</remapping>
-      </ros>
-      <output_type>sensor_msgs/LaserScan</output_type>
-      <frame_name>lidar_link</frame_name>
-    </plugin>
-  </sensor>
-</gazebo>
++-------------------------------------------------------------+
+|                         GAZEBO SIM                          |
+|  - Simulates 3D physical arena & robot dynamics             |
+|  - Listens to:    /cmd_vel (Drives robot wheels)            |
+|  - Publishes:     /scan (sensor_msgs/LaserScan)             |
+|                   /camera/image_raw (sensor_msgs/Image)     |
+|                   /odom (nav_msgs/Odometry)                 |
++-------------------------------------------------------------+
+                                │
+                                ▼  ROS 2 Middleware Topics
++-------------------------------------------------------------+
+|                            RVIZ2                            |
+|  - Fixed Frame:   odom                                      |
+|  - RobotModel:    Renders 3D chassis & rotating wheels      |
+|  - LaserScan:     Displays 360° laser reflection points     |
+|  - Image:         Displays live front camera view           |
+|  - TF Display:    Visualizes coordinate axes in real time   |
++-------------------------------------------------------------+
 ```
 
 ---
 
-## 3. Dissecting `sensor_msgs/msg/LaserScan`
+## 2. Teleoperation: Driving with `/cmd_vel`
 
-When `/scan` is received in Python:
-* `msg.angle_min` and `msg.angle_max`: Angular coverage ($-\pi$ to $+\pi$).
-* `msg.angle_increment`: Angular step between beam readings (e.g., $1^\circ \approx 0.0174$ rad).
-* `msg.ranges`: An array of float distances in meters (index 0 corresponds to `angle_min`).
-
-To inspect only the **front cone** ($\pm 30^\circ$):
-```python
-# Convert angle to array index
-center_idx = len(msg.ranges) // 2
-half_window = int(math.radians(30) / msg.angle_increment)
-front_ranges = msg.ranges[center_idx - half_window : center_idx + half_window]
+You can manually drive the simulated robot using the standard keyboard teleoperation tool:
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
+Use `i` (forward), `,` (backward), `j` (turn left), `l` (turn right), and `k` (stop).
+
+---
+
+## 3. Inspecting the Computational Graph with `rqt_graph`
+
+To verify which nodes are actively communicating:
+```bash
+ros2 run rqt_graph rqt_graph
+```
+You will see `teleop_twist_keyboard` connected to `gazebo`, and `gazebo` broadcasting `/scan`, `/camera/image_raw`, and `/tf` to `rviz2`.
+
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 4
+
+When asking AI (ChatGPT/Claude) for simulation launch files and RViz configs, watch out for these 3 common hallucinations:
+
+1. **RViz Fixed Frame Disconnection**: AI frequently forgets to specify the `Fixed Frame` in RViz launch instructions or sets it to an unbroadcasted frame (e.g. `map` when no SLAM node is running). If Fixed Frame is wrong, RViz displays a global status error `Transform [sender] to [fixed_frame] does not exist` and sensor displays turn red. Always set Fixed Frame to `odom` or `base_link`.
+2. **Sensor QoS Mismatch Silence**: High-frequency Gazebo sensor plugins publish using `BestEffort` (UDP-style) QoS. If an AI generates a Python subscriber using default `Reliable` QoS, ROS 2 will silently refuse to pass messages. Always configure sensor subscribers with `rclpy.qos.qos_profile_sensor_data`.
+3. **Ghost Node Namespace Conflicts**: AI often adds random namespaces like `/my_robot/` to plugins but forgets to apply them to teleop or RViz. As a result, the robot listens on `/my_robot/cmd_vel` while teleop publishes to `/cmd_vel`, leaving the robot completely unresponsive.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Launch file to display the APEX robot model in RViz2 with dynamic TF broadcasting.
+Launch file to display the APEX robot model in RViz2 with joint_state_publisher_gui.
 """
 
 import os
@@ -14,10 +14,9 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('apex_robot_description')
     xacro_file = os.path.join(pkg_share, 'urdf', 'apex_chassis.urdf.xacro')
 
-    # Convert Xacro to URDF representation
     robot_description = Command(['xacro ', xacro_file])
 
-    # Node: robot_state_publisher
+    # 1. Robot State Publisher (publishes TF tree from robot_description and joint_states)
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -26,25 +25,24 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description}]
     )
 
-    # Node: dynamic TF broadcaster
-    odom_tf_node = Node(
-        package='apex_robot_description',
-        executable='odom_tf_broadcaster',
-        name='odom_tf_broadcaster',
+    # 2. Joint State Publisher GUI (slider interface to rotate joints manually)
+    joint_state_publisher_gui_node = Node(
+        package='joint_state_publisher_gui',
+        executable='joint_state_publisher_gui',
+        name='joint_state_publisher_gui',
         output='screen'
     )
 
-    # Node: rviz2
+    # 3. RViz2
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        output='screen',
-        arguments=['-d', '/opt/ros/humble/share/rviz2/default.rviz'] if False else []
+        output='screen'
     )
 
     return LaunchDescription([
         robot_state_publisher_node,
-        odom_tf_node,
+        joint_state_publisher_gui_node,
         rviz_node
     ])
