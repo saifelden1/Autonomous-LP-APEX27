@@ -1,54 +1,73 @@
-# APEX Autonomous Systems: 7-Week Onboarding Sprint (Week 0 – 6)
-## Exposure to Autonomous Systems & ROS 2 for Formula Student AI & ERC 27
+# Week 5: Perception & SLAM Fundamentals (Theoretical & Practical Exposure)
 
-Welcome to **APEX Autonomous Systems**! This onboarding program is designed to give beginners **practical exposure and fundamental knowledge** of the modern ROS 2 autonomous robotics pipeline without overwhelming them with unnecessary complexity.
-
----
-
-## 🎯 Track Relevance
-
-Candidates build foundational awareness for our two competition tracks:
-1. **Formula Student Driverless (Formula AI)**: High-speed autonomous race cars, cone perception, odometry, path tracking, and vehicle control.
-2. **European Rover Challenge (ERC 27)**: Mars Yard planetary rovers, 3D terrain navigation, sensor fusion, obstacle detection, and mapping.
+Welcome to Week 5! This module provides a fast, structured, and practical overview of **Perception & SLAM** (Simultaneous Localization And Mapping).
 
 ---
 
-## 📅 7-Week Curriculum Roadmap
+## 1. What is SLAM? (The Chicken-and-Egg Problem)
 
-| Week | Branch | Core Concepts | Hands-On Project |
-| :---: | :--- | :--- | :--- |
-| **0** | [`week-0-git-docker-linux`](../../tree/week-0-git-docker-linux) | Linux CLI basics, Git/GitHub workflow, Docker container setup, ROS 2 install steps & links | **Developer Environment Setup & ROS 2 Smoke Test** |
-| **1** | [`week-1-ros2-basics`](../../tree/week-1-ros2-basics) | `colcon build`, ROS 2 architecture, Publisher & Subscriber nodes in Python, Launch files | **Telemetry Heartbeat & `rqt_graph` Node Inspection** |
-| **2** | [`week-2-urdf-tf-rviz`](../../tree/week-2-urdf-tf-rviz) | URDF & Xacro modeling, Coordinate frames, REP-105 TF tree, RViz2 visual inspection | **4-Wheel Vehicle Model & RViz TF Inspection** |
-| **3** | [`week-3-gazebo-sensors-world`](../../tree/week-3-gazebo-sensors-world) | Gazebo physics, custom world creation, sensor physics (LiDAR, Camera, IMU, Encoders) | **Custom Arena Creation & Sensor Plugin Attachment** |
-| **4** | [`week-4-simulation-rviz-bridge`](../../tree/week-4-simulation-rviz-bridge) | Model deployment in Gazebo, sensor streams into RViz (LaserScan, Images), `rqt_graph` | **Driving Rover in World & Live RViz Sensor Visualization** |
-| **5** | [`week-5-perception-slam`](../../tree/week-5-perception-slam) | Perception & SLAM fundamentals: types (2D/3D SLAM), cone/ArUco detection, sensor/topic contracts | **Simulated SLAM Mapping & Landmark Detection Exploration** |
-| **6** | [`week-6-planning-control`](../../tree/week-6-planning-control) | Path planning & control fundamentals: Nav2 costmaps, Global Planners, Pure Pursuit, `/cmd_vel` | **Autonomous Navigation to Goal Marker in Simulation** |
+To navigate autonomously, a robot must answer two questions simultaneously:
+1. *Where am I?* (**Localization**)
+2. *What does the world look like?* (**Mapping**)
+
+Without a map, the robot cannot localize; without knowing where it is, it cannot build a map. **SLAM algorithms** solve both in real-time.
+
+```
++---------------------------------------------------------------------------------+
+|                                 SLAM ALGORITHM                                  |
+|                                                                                 |
+|   Inputs:                                                                       |
+|   - Sensor Scans:  /scan (LaserScan) or /camera/depth/points (PointCloud2)      |
+|   - Odometry:      /odom (Wheel odometry + IMU)                                 |
+|                                                                                 |
+|   Outputs:                                                                      |
+|   - 2D/3D Map:     /map (nav_msgs/OccupancyGrid)                                |
+|   - Correction TF: map ➔ odom (Compensates for wheel drift)                     |
++---------------------------------------------------------------------------------+
+```
 
 ---
 
-## ⚠️ The "Top 3 AI Hallucination Traps" Rule
+## 2. SLAM Types: 2D LiDAR vs 3D Visual SLAM
 
-Each week includes a dedicated **Top 3 AI Hallucination Traps** section warning you of the exact mistakes AI tools (ChatGPT, Claude) make for that topic (e.g. giving ROS 1 `roscore` commands, swapping TF frames, or using obsolete Gazebo plugins). Check that section before running any AI code!
+| Method | Typical ROS 2 Package | Primary Sensors | Pros & Cons |
+| :--- | :--- | :--- | :--- |
+| **2D LiDAR SLAM** | `slam_toolbox`, `cartographer` | 2D LiDAR + Odometry | Fast, low compute, highly reliable on flat surfaces. Cannot see height obstacles. |
+| **3D Visual / RGB-D SLAM** | `rtabmap_ros`, `orb_slam3` | Stereo / Depth Camera + IMU | Rich 3D maps and visual loop closure. High compute cost, sensitive to lighting changes. |
 
 ---
 
-## 🛠️ Getting Started in Under 5 Minutes
+## 3. Perception: Feature Extraction in Competition
 
-1. **Option A: Docker (Zero-Install)**
-   ```bash
-   cd docker
-   # On Linux:
-   ./run_docker.sh
-   # On Windows:
-   run_docker.bat
-   ```
-2. **Option B: Ubuntu Native (22.04 LTS)**
-   ```bash
-   source /opt/ros/humble/setup.bash
-   ```
+* **Formula Student AI Track**: High-speed track boundary detection:
+  * Detects **Yellow cones** (right boundary) and **Blue cones** (left boundary) using HSV color segmentation or lightweight neural networks (YOLOv8-tiny).
+  * Estimates 3D metric distances $(X, Y)$ relative to the car bumper.
+* **ERC 27 Track**: Mars Yard landmark and hazard tracking:
+  * Detects **ArUco fiducials** (4x4 matrix barcodes) for pinpoint target localization.
+  * Clusters 3D terrain point clouds into traversable ground vs untraversable rocks.
 
-3. **Navigate to the current week**:
-   ```bash
-   git checkout week-0-git-docker-linux
-   ```
+---
+
+## 4. Hardware Actuators, Sensors & ROS 2 Topic Contracts
+
+```
+SENSORS (Inputs):
+├── /scan                    (sensor_msgs/LaserScan)       - 2D distance slices
+├── /camera/color/image_raw  (sensor_msgs/Image)           - RGB pixel matrices
+├── /camera/depth/points     (sensor_msgs/PointCloud2)   - 3D spatial coordinate points
+├── /imu/data                (sensor_msgs/Imu)             - Angular velocity & acceleration
+└── /odom                    (nav_msgs/Odometry)           - Wheel encoder dead-reckoning
+
+ACTUATORS (Outputs):
+└── /cmd_vel                 (geometry_msgs/Twist)         - Linear & angular velocity commands
+```
+
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 5
+
+When asking AI (ChatGPT/Claude) for SLAM and perception pipelines, watch out for these 3 common hallucinations:
+
+1. **Duplicate `map ➔ odom` TF Broadcaster**: AI often suggests writing a custom TF node or static transform publisher for `map ➔ odom`. In any standard SLAM system, the `map ➔ odom` transform is dynamically computed and broadcasted **exclusively by the SLAM node** (`slam_toolbox` or `rtabmap`). Having a second publisher causes RViz to flicker uncontrollably between two competing world origins!
+2. **Body vs Optical Camera Coordinate Inversion**: In ROS, robot bodies follow standard engineering coordinates ($X$ forward, $Y$ left, $Z$ up), but camera optical algorithms expect the optical standard ($Z$ forward, $X$ right, $Y$ down). If AI omits the optical frame transform joint, detected 3D objects and point clouds will appear sideways or upside down.
+3. **Invalid Occupancy Grid Values**: When asked to create or manipulate `/map` messages in Python, AI often outputs integer values outside the valid range. In ROS 2, `nav_msgs/msg/OccupancyGrid` data must strictly be: `-1` (Unknown), `0` (Completely Free), or `1` to `100` (Probability of Obstacle). Using `255` or negative values other than `-1` results in completely invisible maps in RViz.
