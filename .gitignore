@@ -1,0 +1,34 @@
+# ROS 2 build artifacts
+build/
+install/
+log/
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE & Editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Colcon & ROS tools
+.colcon/
+COLCON_IGNORE
+*.orig
+
+# Gazebo simulation artifacts & logs
+*.log
+~/.gazebo/log/
+~/.ignition/log/
+~/.gz/log/

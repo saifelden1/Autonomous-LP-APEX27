@@ -1,0 +1,18 @@
+services:
+  autonomous_lp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: apex_autonomous_lp:humble
+    container_name: apex_autonomous_env
+    network_mode: host
+    ipc: host
+    privileged: true
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ..:/workspace:rw
+    stdin_open: true
+    tty: true
