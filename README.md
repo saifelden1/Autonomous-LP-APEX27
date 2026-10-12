@@ -1,54 +1,45 @@
-# APEX Autonomous Systems: 7-Week Onboarding Sprint (Week 0 – 6)
-## Exposure to Autonomous Systems & ROS 2 for Formula Student AI & ERC 27
+# Week 3: Gazebo Simulation, Sensor Physics & World Creation
 
-Welcome to **APEX Autonomous Systems**! This onboarding program is designed to give beginners **practical exposure and fundamental knowledge** of the modern ROS 2 autonomous robotics pipeline without overwhelming them with unnecessary complexity.
-
----
-
-## 🎯 Track Relevance
-
-Candidates build foundational awareness for our two competition tracks:
-1. **Formula Student Driverless (Formula AI)**: High-speed autonomous race cars, cone perception, odometry, path tracking, and vehicle control.
-2. **European Rover Challenge (ERC 27)**: Mars Yard planetary rovers, 3D terrain navigation, sensor fusion, obstacle detection, and mapping.
+Welcome to Week 3! Now that we have a 3D robot model, we step into **Physics Simulation**. In this module, you learn how simulated worlds are built and how physical sensors are modeled.
 
 ---
 
-## 📅 7-Week Curriculum Roadmap
+## 1. What is Gazebo?
 
-| Week | Branch | Core Concepts | Hands-On Project |
-| :---: | :--- | :--- | :--- |
-| **0** | [`week-0-git-docker-linux`](../../tree/week-0-git-docker-linux) | Linux CLI basics, Git/GitHub workflow, Docker container setup, ROS 2 install steps & links | **Developer Environment Setup & ROS 2 Smoke Test** |
-| **1** | [`week-1-ros2-basics`](../../tree/week-1-ros2-basics) | `colcon build`, ROS 2 architecture, Publisher & Subscriber nodes in Python, Launch files | **Telemetry Heartbeat & `rqt_graph` Node Inspection** |
-| **2** | [`week-2-urdf-tf-rviz`](../../tree/week-2-urdf-tf-rviz) | URDF & Xacro modeling, Coordinate frames, REP-105 TF tree, RViz2 visual inspection | **4-Wheel Vehicle Model & RViz TF Inspection** |
-| **3** | [`week-3-gazebo-sensors-world`](../../tree/week-3-gazebo-sensors-world) | Gazebo physics, custom world creation, sensor physics (LiDAR, Camera, IMU, Encoders) | **Custom Arena Creation & Sensor Plugin Attachment** |
-| **4** | [`week-4-simulation-rviz-bridge`](../../tree/week-4-simulation-rviz-bridge) | Model deployment in Gazebo, sensor streams into RViz (LaserScan, Images), `rqt_graph` | **Driving Rover in World & Live RViz Sensor Visualization** |
-| **5** | [`week-5-perception-slam`](../../tree/week-5-perception-slam) | Perception & SLAM fundamentals: types (2D/3D SLAM), cone/ArUco detection, sensor/topic contracts | **Simulated SLAM Mapping & Landmark Detection Exploration** |
-| **6** | [`week-6-planning-control`](../../tree/week-6-planning-control) | Path planning & control fundamentals: Nav2 costmaps, Global Planners, Pure Pursuit, `/cmd_vel` | **Autonomous Navigation to Goal Marker in Simulation** |
+While RViz only renders what ROS 2 tells it to display, **Gazebo** is a real-world physics engine:
+* It simulates **mass, gravity, momentum, and friction**.
+* It simulates **collisions** between solid objects.
+* It simulates **photons and lasers** bouncing off obstacles to generate realistic sensor streams.
 
 ---
 
-## ⚠️ The "Top 3 AI Hallucination Traps" Rule
+## 2. Robotics Sensor Types Explained
 
-Each week includes a dedicated **Top 3 AI Hallucination Traps** section warning you of the exact mistakes AI tools (ChatGPT, Claude) make for that topic (e.g. giving ROS 1 `roscore` commands, swapping TF frames, or using obsolete Gazebo plugins). Check that section before running any AI code!
+Autonomous vehicles rely on a suite of complementary sensors:
+
+| Sensor Type | Physical Working Principle | Formula AI & ERC Relevance | ROS 2 Message Type |
+| :--- | :--- | :--- | :--- |
+| **2D LiDAR** | Emits rotating laser pulses; measures time-of-flight distance. | Fast 360° obstacle detection and 2D track boundary scanning. | `sensor_msgs/msg/LaserScan` |
+| **RGB Camera** | Collects light through lenses onto a CMOS sensor grid. | Color cone detection (Yellow/Blue) and ArUco marker tracking. | `sensor_msgs/msg/Image` |
+| **IMU (Inertial Unit)** | Micro-electromechanical (MEMS) gyroscopes & accelerometers. | High-frequency angular yaw rate and vehicle acceleration. | `sensor_msgs/msg/Imu` |
+| **Wheel Encoders** | Hall-effect sensors counting wheel shaft rotations. | Dead-reckoning odometry velocity calculation. | `nav_msgs/msg/Odometry` |
 
 ---
 
-## 🛠️ Getting Started in Under 5 Minutes
+## 3. Creating a Custom Gazebo World (`.world`)
 
-1. **Option A: Docker (Zero-Install)**
-   ```bash
-   cd docker
-   # On Linux:
-   ./run_docker.sh
-   # On Windows:
-   run_docker.bat
-   ```
-2. **Option B: Ubuntu Native (22.04 LTS)**
-   ```bash
-   source /opt/ros/humble/setup.bash
-   ```
+A Gazebo world is defined in an XML-based **SDF (Simulation Description Format)** file. A minimal world requires:
+1. Physics engine settings (`<physics>`).
+2. A ground plane (`<include><uri>model://ground_plane</uri></include>`).
+3. Sunlight illumination (`<include><uri>model://sun</uri></include>`).
+4. Custom arena walls and obstacles (`<model name="wall_1">`).
 
-3. **Navigate to the current week**:
-   ```bash
-   git checkout week-0-git-docker-linux
-   ```
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 3
+
+When asking AI (ChatGPT/Claude) for Gazebo worlds and plugins, watch out for these 3 common hallucinations:
+
+1. **Deprecated Gazebo Classic vs Gazebo Sim Tags**: AI constantly confuses Gazebo Classic (plugins ending in `.so`, like `libgazebo_ros_ray_sensor.so`) with modern Ignition/Gz Sim (using system plugins `<plugin filename="ignition-gazebo-sensors-system">`). Using the wrong syntax causes Gazebo to ignore the plugin completely without any error message!
+2. **Missing SDF Sunlight & Ground**: When asked to generate a `.world` file, AI frequently forgets the `<include><uri>model://sun</uri></include>` and `<include><uri>model://ground_plane</uri></include>` tags. The result is a completely pitch-black screen where spawned robots fall into an infinite abyss.
+3. **Massless Links in Physics Simulation**: In RViz, links do not need mass. In Gazebo, any link connected via a non-fixed joint or equipped with collision geometry must have a positive `<mass>` and valid moments of inertia. If mass is zero, Gazebo will crash on startup with a physics solver division-by-zero error.

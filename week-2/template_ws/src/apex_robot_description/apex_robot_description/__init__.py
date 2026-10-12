@@ -1,1 +1,0 @@
-# APEX Robot Description Module

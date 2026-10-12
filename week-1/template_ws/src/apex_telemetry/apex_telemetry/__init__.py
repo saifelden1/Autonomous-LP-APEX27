@@ -1,1 +1,0 @@
-# APEX Telemetry Module
