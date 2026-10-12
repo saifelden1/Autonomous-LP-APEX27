@@ -1,54 +1,60 @@
-# APEX Autonomous Systems: 7-Week Onboarding Sprint (Week 0 – 6)
-## Exposure to Autonomous Systems & ROS 2 for Formula Student AI & ERC 27
+# Week 4: Model Deployment in Gazebo & Sensor Streaming into RViz
 
-Welcome to **APEX Autonomous Systems**! This onboarding program is designed to give beginners **practical exposure and fundamental knowledge** of the modern ROS 2 autonomous robotics pipeline without overwhelming them with unnecessary complexity.
-
----
-
-## 🎯 Track Relevance
-
-Candidates build foundational awareness for our two competition tracks:
-1. **Formula Student Driverless (Formula AI)**: High-speed autonomous race cars, cone perception, odometry, path tracking, and vehicle control.
-2. **European Rover Challenge (ERC 27)**: Mars Yard planetary rovers, 3D terrain navigation, sensor fusion, obstacle detection, and mapping.
+Welcome to Week 4! This week brings everything together: you deploy your robot model into the Gazebo arena, drive it with teleoperation, stream live sensors into RViz, and inspect the computational graph with `rqt_graph`.
 
 ---
 
-## 📅 7-Week Curriculum Roadmap
+## 1. The Simulation-to-Visualization Bridge
 
-| Week | Branch | Core Concepts | Hands-On Project |
-| :---: | :--- | :--- | :--- |
-| **0** | [`week-0-git-docker-linux`](../../tree/week-0-git-docker-linux) | Linux CLI basics, Git/GitHub workflow, Docker container setup, ROS 2 install steps & links | **Developer Environment Setup & ROS 2 Smoke Test** |
-| **1** | [`week-1-ros2-basics`](../../tree/week-1-ros2-basics) | `colcon build`, ROS 2 architecture, Publisher & Subscriber nodes in Python, Launch files | **Telemetry Heartbeat & `rqt_graph` Node Inspection** |
-| **2** | [`week-2-urdf-tf-rviz`](../../tree/week-2-urdf-tf-rviz) | URDF & Xacro modeling, Coordinate frames, REP-105 TF tree, RViz2 visual inspection | **4-Wheel Vehicle Model & RViz TF Inspection** |
-| **3** | [`week-3-gazebo-sensors-world`](../../tree/week-3-gazebo-sensors-world) | Gazebo physics, custom world creation, sensor physics (LiDAR, Camera, IMU, Encoders) | **Custom Arena Creation & Sensor Plugin Attachment** |
-| **4** | [`week-4-simulation-rviz-bridge`](../../tree/week-4-simulation-rviz-bridge) | Model deployment in Gazebo, sensor streams into RViz (LaserScan, Images), `rqt_graph` | **Driving Rover in World & Live RViz Sensor Visualization** |
-| **5** | [`week-5-perception-slam`](../../tree/week-5-perception-slam) | Perception & SLAM fundamentals: types (2D/3D SLAM), cone/ArUco detection, sensor/topic contracts | **Simulated SLAM Mapping & Landmark Detection Exploration** |
-| **6** | [`week-6-planning-control`](../../tree/week-6-planning-control) | Path planning & control fundamentals: Nav2 costmaps, Global Planners, Pure Pursuit, `/cmd_vel` | **Autonomous Navigation to Goal Marker in Simulation** |
+Here is the exact data pipeline running between Gazebo, ROS 2, and RViz:
+
+```
++-------------------------------------------------------------+
+|                         GAZEBO SIM                          |
+|  - Simulates 3D physical arena & robot dynamics             |
+|  - Listens to:    /cmd_vel (Drives robot wheels)            |
+|  - Publishes:     /scan (sensor_msgs/LaserScan)             |
+|                   /camera/image_raw (sensor_msgs/Image)     |
+|                   /odom (nav_msgs/Odometry)                 |
++-------------------------------------------------------------+
+                                │
+                                ▼  ROS 2 Middleware Topics
++-------------------------------------------------------------+
+|                            RVIZ2                            |
+|  - Fixed Frame:   odom                                      |
+|  - RobotModel:    Renders 3D chassis & rotating wheels      |
+|  - LaserScan:     Displays 360° laser reflection points     |
+|  - Image:         Displays live front camera view           |
+|  - TF Display:    Visualizes coordinate axes in real time   |
++-------------------------------------------------------------+
+```
 
 ---
 
-## ⚠️ The "Top 3 AI Hallucination Traps" Rule
+## 2. Teleoperation: Driving with `/cmd_vel`
 
-Each week includes a dedicated **Top 3 AI Hallucination Traps** section warning you of the exact mistakes AI tools (ChatGPT, Claude) make for that topic (e.g. giving ROS 1 `roscore` commands, swapping TF frames, or using obsolete Gazebo plugins). Check that section before running any AI code!
+You can manually drive the simulated robot using the standard keyboard teleoperation tool:
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+Use `i` (forward), `,` (backward), `j` (turn left), `l` (turn right), and `k` (stop).
 
 ---
 
-## 🛠️ Getting Started in Under 5 Minutes
+## 3. Inspecting the Computational Graph with `rqt_graph`
 
-1. **Option A: Docker (Zero-Install)**
-   ```bash
-   cd docker
-   # On Linux:
-   ./run_docker.sh
-   # On Windows:
-   run_docker.bat
-   ```
-2. **Option B: Ubuntu Native (22.04 LTS)**
-   ```bash
-   source /opt/ros/humble/setup.bash
-   ```
+To verify which nodes are actively communicating:
+```bash
+ros2 run rqt_graph rqt_graph
+```
+You will see `teleop_twist_keyboard` connected to `gazebo`, and `gazebo` broadcasting `/scan`, `/camera/image_raw`, and `/tf` to `rviz2`.
 
-3. **Navigate to the current week**:
-   ```bash
-   git checkout week-0-git-docker-linux
-   ```
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 4
+
+When asking AI (ChatGPT/Claude) for simulation launch files and RViz configs, watch out for these 3 common hallucinations:
+
+1. **RViz Fixed Frame Disconnection**: AI frequently forgets to specify the `Fixed Frame` in RViz launch instructions or sets it to an unbroadcasted frame (e.g. `map` when no SLAM node is running). If Fixed Frame is wrong, RViz displays a global status error `Transform [sender] to [fixed_frame] does not exist` and sensor displays turn red. Always set Fixed Frame to `odom` or `base_link`.
+2. **Sensor QoS Mismatch Silence**: High-frequency Gazebo sensor plugins publish using `BestEffort` (UDP-style) QoS. If an AI generates a Python subscriber using default `Reliable` QoS, ROS 2 will silently refuse to pass messages. Always configure sensor subscribers with `rclpy.qos.qos_profile_sensor_data`.
+3. **Ghost Node Namespace Conflicts**: AI often adds random namespaces like `/my_robot/` to plugins but forgets to apply them to teleop or RViz. As a result, the robot listens on `/my_robot/cmd_vel` while teleop publishes to `/cmd_vel`, leaving the robot completely unresponsive.
