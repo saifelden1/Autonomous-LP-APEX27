@@ -1,54 +1,76 @@
-# APEX Autonomous Systems: 7-Week Onboarding Sprint (Week 0 – 6)
-## Exposure to Autonomous Systems & ROS 2 for Formula Student AI & ERC 27
+# Week 1: ROS 2 Architecture, Nodes, Pub/Sub & Launch Files
 
-Welcome to **APEX Autonomous Systems**! This onboarding program is designed to give beginners **practical exposure and fundamental knowledge** of the modern ROS 2 autonomous robotics pipeline without overwhelming them with unnecessary complexity.
-
----
-
-## 🎯 Track Relevance
-
-Candidates build foundational awareness for our two competition tracks:
-1. **Formula Student Driverless (Formula AI)**: High-speed autonomous race cars, cone perception, odometry, path tracking, and vehicle control.
-2. **European Rover Challenge (ERC 27)**: Mars Yard planetary rovers, 3D terrain navigation, sensor fusion, obstacle detection, and mapping.
+Welcome to Week 1! This week introduces the core building blocks of ROS 2 (Robot Operating System).
 
 ---
 
-## 📅 7-Week Curriculum Roadmap
+## 1. ROS 2 Computational Graph & Architecture
 
-| Week | Branch | Core Concepts | Hands-On Project |
-| :---: | :--- | :--- | :--- |
-| **0** | [`week-0-git-docker-linux`](../../tree/week-0-git-docker-linux) | Linux CLI basics, Git/GitHub workflow, Docker container setup, ROS 2 install steps & links | **Developer Environment Setup & ROS 2 Smoke Test** |
-| **1** | [`week-1-ros2-basics`](../../tree/week-1-ros2-basics) | `colcon build`, ROS 2 architecture, Publisher & Subscriber nodes in Python, Launch files | **Telemetry Heartbeat & `rqt_graph` Node Inspection** |
-| **2** | [`week-2-urdf-tf-rviz`](../../tree/week-2-urdf-tf-rviz) | URDF & Xacro modeling, Coordinate frames, REP-105 TF tree, RViz2 visual inspection | **4-Wheel Vehicle Model & RViz TF Inspection** |
-| **3** | [`week-3-gazebo-sensors-world`](../../tree/week-3-gazebo-sensors-world) | Gazebo physics, custom world creation, sensor physics (LiDAR, Camera, IMU, Encoders) | **Custom Arena Creation & Sensor Plugin Attachment** |
-| **4** | [`week-4-simulation-rviz-bridge`](../../tree/week-4-simulation-rviz-bridge) | Model deployment in Gazebo, sensor streams into RViz (LaserScan, Images), `rqt_graph` | **Driving Rover in World & Live RViz Sensor Visualization** |
-| **5** | [`week-5-perception-slam`](../../tree/week-5-perception-slam) | Perception & SLAM fundamentals: types (2D/3D SLAM), cone/ArUco detection, sensor/topic contracts | **Simulated SLAM Mapping & Landmark Detection Exploration** |
-| **6** | [`week-6-planning-control`](../../tree/week-6-planning-control) | Path planning & control fundamentals: Nav2 costmaps, Global Planners, Pure Pursuit, `/cmd_vel` | **Autonomous Navigation to Goal Marker in Simulation** |
+ROS 2 organizes software into independent processes called **Nodes** that communicate over a network layer called **DDS**:
+* **Node**: A program that performs a single task (e.g., reading a sensor, controlling a steering motor).
+* **Topic**: A named channel where data is published and subscribed to.
+* **Message**: The data format sent over a topic (e.g. `std_msgs/msg/String`, `geometry_msgs/msg/Twist`).
+
+```
++---------------------------+                      +---------------------------+
+|    Publisher Node         |                      |    Subscriber Node        |
+| (e.g. telemetry_publisher)|                      |  (e.g. telemetry_listener)|
+|                           |                      |                           |
+|   Timer Callback (10 Hz)  |                      |   Subscription Callback   |
+|            │              |                      |             ▲             |
+|            ▼              |                      |             │             |
+|      publishes to         | ═════ Topic ═══════> |        listens on         |
+|   /vehicle/telemetry      |                      |    /vehicle/telemetry     |
++---------------------------+                      +---------------------------+
+```
 
 ---
 
-## ⚠️ The "Top 3 AI Hallucination Traps" Rule
+## 2. Compiling with Colcon & Workspace Setup
 
-Each week includes a dedicated **Top 3 AI Hallucination Traps** section warning you of the exact mistakes AI tools (ChatGPT, Claude) make for that topic (e.g. giving ROS 1 `roscore` commands, swapping TF frames, or using obsolete Gazebo plugins). Check that section before running any AI code!
+A standard ROS 2 workspace structure:
+```
+ros2_ws/
+├── src/        <-- Where packages and Python source code live
+├── build/      <-- Intermediate build files
+├── install/    <-- Executables and launch files ready to run
+└── log/        <-- Build and execution logs
+```
+
+Essential commands:
+```bash
+# Build package with symlinks (Python changes take effect immediately)
+colcon build --symlink-install
+
+# Source your workspace overlay
+source install/setup.bash
+
+# Inspect active node connections visually
+ros2 run rqt_graph rqt_graph
+```
 
 ---
 
-## 🛠️ Getting Started in Under 5 Minutes
+## 3. Writing a Python Launch File
 
-1. **Option A: Docker (Zero-Install)**
-   ```bash
-   cd docker
-   # On Linux:
-   ./run_docker.sh
-   # On Windows:
-   run_docker.bat
-   ```
-2. **Option B: Ubuntu Native (22.04 LTS)**
-   ```bash
-   source /opt/ros/humble/setup.bash
-   ```
+Instead of opening two separate terminals to start a publisher and subscriber, a **Launch File** starts both together:
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
 
-3. **Navigate to the current week**:
-   ```bash
-   git checkout week-0-git-docker-linux
-   ```
+def generate_launch_description():
+    return LaunchDescription([
+        Node(package='apex_telemetry', executable='telemetry_publisher', name='publisher'),
+        Node(package='apex_telemetry', executable='telemetry_listener', name='listener', output='screen'),
+    ])
+```
+
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 1
+
+When asking AI (ChatGPT/Claude) for ROS 2 code, watch out for these 3 common hallucinations:
+
+1. **ROS 1 vs ROS 2 Mix-up**: AI frequently outputs deprecated ROS 1 commands like `roscore`, `rosrun`, `rostopic echo`, or imports `import rospy`. ROS 2 uses `rclpy`, `ros2 run`, and has no `roscore`!
+2. **Blocking `time.sleep()` in Callbacks**: AI will often place `time.sleep(1)` inside a subscription callback. In ROS 2's default single-threaded executor, this freezes the entire node and blocks all other topics and timers. Always use ROS 2 timers (`create_timer`) instead.
+3. **Ghost Entry Points in `setup.py`**: AI creates a Python node file but forgets to declare the entry point script in `setup.py` or omits `<depend>` tags in `package.xml`. Your code will compile, but `ros2 run` will report `Package 'xyz' doesn't have the executable`.
