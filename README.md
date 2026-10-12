@@ -1,54 +1,71 @@
-# APEX Autonomous Systems: 7-Week Onboarding Sprint (Week 0 – 6)
-## Exposure to Autonomous Systems & ROS 2 for Formula Student AI & ERC 27
+# Week 2: Robot Modeling (URDF/Xacro), TF Tree & RViz Visualization
 
-Welcome to **APEX Autonomous Systems**! This onboarding program is designed to give beginners **practical exposure and fundamental knowledge** of the modern ROS 2 autonomous robotics pipeline without overwhelming them with unnecessary complexity.
-
----
-
-## 🎯 Track Relevance
-
-Candidates build foundational awareness for our two competition tracks:
-1. **Formula Student Driverless (Formula AI)**: High-speed autonomous race cars, cone perception, odometry, path tracking, and vehicle control.
-2. **European Rover Challenge (ERC 27)**: Mars Yard planetary rovers, 3D terrain navigation, sensor fusion, obstacle detection, and mapping.
+Welcome to Week 2! This week is all about **robot geometry and coordinate frames**. You will learn how to describe physical robots in code and inspect them visually in RViz.
 
 ---
 
-## 📅 7-Week Curriculum Roadmap
+## 1. What is URDF & Xacro?
 
-| Week | Branch | Core Concepts | Hands-On Project |
-| :---: | :--- | :--- | :--- |
-| **0** | [`week-0-git-docker-linux`](../../tree/week-0-git-docker-linux) | Linux CLI basics, Git/GitHub workflow, Docker container setup, ROS 2 install steps & links | **Developer Environment Setup & ROS 2 Smoke Test** |
-| **1** | [`week-1-ros2-basics`](../../tree/week-1-ros2-basics) | `colcon build`, ROS 2 architecture, Publisher & Subscriber nodes in Python, Launch files | **Telemetry Heartbeat & `rqt_graph` Node Inspection** |
-| **2** | [`week-2-urdf-tf-rviz`](../../tree/week-2-urdf-tf-rviz) | URDF & Xacro modeling, Coordinate frames, REP-105 TF tree, RViz2 visual inspection | **4-Wheel Vehicle Model & RViz TF Inspection** |
-| **3** | [`week-3-gazebo-sensors-world`](../../tree/week-3-gazebo-sensors-world) | Gazebo physics, custom world creation, sensor physics (LiDAR, Camera, IMU, Encoders) | **Custom Arena Creation & Sensor Plugin Attachment** |
-| **4** | [`week-4-simulation-rviz-bridge`](../../tree/week-4-simulation-rviz-bridge) | Model deployment in Gazebo, sensor streams into RViz (LaserScan, Images), `rqt_graph` | **Driving Rover in World & Live RViz Sensor Visualization** |
-| **5** | [`week-5-perception-slam`](../../tree/week-5-perception-slam) | Perception & SLAM fundamentals: types (2D/3D SLAM), cone/ArUco detection, sensor/topic contracts | **Simulated SLAM Mapping & Landmark Detection Exploration** |
-| **6** | [`week-6-planning-control`](../../tree/week-6-planning-control) | Path planning & control fundamentals: Nav2 costmaps, Global Planners, Pure Pursuit, `/cmd_vel` | **Autonomous Navigation to Goal Marker in Simulation** |
+* **URDF (Unified Robot Description Format)**: An XML standard describing rigid bodies (**Links**) and the mechanical pivots connecting them (**Joints**).
+* **Xacro (XML Macros)**: Adds variables, math, and reusable templates to URDF so you don't repeat XML blocks.
+
+```
++-----------------------------------------------------------+
+|                          chassis                          |
+|                     (Root Body Link)                      |
++-----------------------------------------------------------+
+        │                                           │
+  (Continuous Joint)                          (Continuous Joint)
+        │                                           │
+        ▼                                           ▼
++-----------------------+                   +-----------------------+
+|  front_left_wheel     |                   |  front_right_wheel    |
++-----------------------+                   +-----------------------+
+```
+
+### Key Elements of a `<link>`:
+1. `<visual>`: Shape, dimensions, and colors for rendering in RViz.
+2. `<collision>`: Simplified bounding shapes used by physics simulators for collision checks.
+3. `<inertial>`: Mass and moments of inertia.
 
 ---
 
-## ⚠️ The "Top 3 AI Hallucination Traps" Rule
+## 2. The TF2 Coordinate Tree & REP-105 Standard
 
-Each week includes a dedicated **Top 3 AI Hallucination Traps** section warning you of the exact mistakes AI tools (ChatGPT, Claude) make for that topic (e.g. giving ROS 1 `roscore` commands, swapping TF frames, or using obsolete Gazebo plugins). Check that section before running any AI code!
+Every sensor and wheel has its own coordinate frame. The **TF2 library** keeps track of where each frame is relative to `base_link` (the center of the vehicle):
+
+```
+base_link (Center of vehicle)
+ ├── chassis
+ ├── front_left_wheel
+ ├── front_right_wheel
+ ├── lidar_link
+ └── camera_link
+```
+
+Tools to inspect frames:
+```bash
+# View live coordinates between two frames
+ros2 run tf2_ros tf2_echo base_link lidar_link
+
+# Generate a visual PDF map of the whole tree
+ros2 run tf2_tools view_frames
+```
 
 ---
 
-## 🛠️ Getting Started in Under 5 Minutes
+## 3. Visualizing in RViz2 with GUI Controls
 
-1. **Option A: Docker (Zero-Install)**
-   ```bash
-   cd docker
-   # On Linux:
-   ./run_docker.sh
-   # On Windows:
-   run_docker.bat
-   ```
-2. **Option B: Ubuntu Native (22.04 LTS)**
-   ```bash
-   source /opt/ros/humble/setup.bash
-   ```
+We use two standard nodes to display the robot:
+* `robot_state_publisher`: Reads the URDF XML and broadcasts the 3D transforms.
+* `joint_state_publisher_gui`: A GUI window with slider bars that let you manually turn the wheels to test joint movement.
 
-3. **Navigate to the current week**:
-   ```bash
-   git checkout week-0-git-docker-linux
-   ```
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 2
+
+When asking AI (ChatGPT/Claude) for URDF and TF code, watch out for these 3 common hallucinations:
+
+1. **Swapping Parent and Child Frames**: AI frequently swaps `<parent>` and `<child>` tags inside joints (e.g. setting `camera_link` as the parent of `chassis`). This breaks the tree hierarchy because each link can only have **one** parent.
+2. **The Cylinder Orientation Bug**: In URDF, cylinders are aligned along the **Z-axis** by default. To make a cylinder function as a vehicle wheel spinning along the Y-axis, an explicit roll rotation `<origin rpy="1.5708 0 0"/>` is required. AI frequently forgets this, creating wheels that slide on their flat faces!
+3. **Invalid Zero Quaternions**: When generating orientation code, AI sometimes defaults quaternion orientation to `(x=0, y=0, z=0, w=0)`. A valid quaternion must always be normalized to length 1.0 (an identity quaternion is `w=1.0, x=0, y=0, z=0`). A zero quaternion will crash RViz transform processing.
