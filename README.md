@@ -1,54 +1,79 @@
-# APEX Autonomous Systems: 7-Week Onboarding Sprint (Week 0 – 6)
-## Exposure to Autonomous Systems & ROS 2 for Formula Student AI & ERC 27
+# Week 0: Developer Environment, Linux CLI, Git & Docker
 
-Welcome to **APEX Autonomous Systems**! This onboarding program is designed to give beginners **practical exposure and fundamental knowledge** of the modern ROS 2 autonomous robotics pipeline without overwhelming them with unnecessary complexity.
-
----
-
-## 🎯 Track Relevance
-
-Candidates build foundational awareness for our two competition tracks:
-1. **Formula Student Driverless (Formula AI)**: High-speed autonomous race cars, cone perception, odometry, path tracking, and vehicle control.
-2. **European Rover Challenge (ERC 27)**: Mars Yard planetary rovers, 3D terrain navigation, sensor fusion, obstacle detection, and mapping.
+Welcome to **Week 0**! The goal of this week is simple: get your developer workstation configured with modern Linux, Git, Docker, and ROS 2 tooling without getting stuck.
 
 ---
 
-## 📅 7-Week Curriculum Roadmap
+## 1. Zero-to-One Linux Administration Primitives
 
-| Week | Branch | Core Concepts | Hands-On Project |
-| :---: | :--- | :--- | :--- |
-| **0** | [`week-0-git-docker-linux`](../../tree/week-0-git-docker-linux) | Linux CLI basics, Git/GitHub workflow, Docker container setup, ROS 2 install steps & links | **Developer Environment Setup & ROS 2 Smoke Test** |
-| **1** | [`week-1-ros2-basics`](../../tree/week-1-ros2-basics) | `colcon build`, ROS 2 architecture, Publisher & Subscriber nodes in Python, Launch files | **Telemetry Heartbeat & `rqt_graph` Node Inspection** |
-| **2** | [`week-2-urdf-tf-rviz`](../../tree/week-2-urdf-tf-rviz) | URDF & Xacro modeling, Coordinate frames, REP-105 TF tree, RViz2 visual inspection | **4-Wheel Vehicle Model & RViz TF Inspection** |
-| **3** | [`week-3-gazebo-sensors-world`](../../tree/week-3-gazebo-sensors-world) | Gazebo physics, custom world creation, sensor physics (LiDAR, Camera, IMU, Encoders) | **Custom Arena Creation & Sensor Plugin Attachment** |
-| **4** | [`week-4-simulation-rviz-bridge`](../../tree/week-4-simulation-rviz-bridge) | Model deployment in Gazebo, sensor streams into RViz (LaserScan, Images), `rqt_graph` | **Driving Rover in World & Live RViz Sensor Visualization** |
-| **5** | [`week-5-perception-slam`](../../tree/week-5-perception-slam) | Perception & SLAM fundamentals: types (2D/3D SLAM), cone/ArUco detection, sensor/topic contracts | **Simulated SLAM Mapping & Landmark Detection Exploration** |
-| **6** | [`week-6-planning-control`](../../tree/week-6-planning-control) | Path planning & control fundamentals: Nav2 costmaps, Global Planners, Pure Pursuit, `/cmd_vel` | **Autonomous Navigation to Goal Marker in Simulation** |
+Robotics software runs predominantly on Linux (Ubuntu). Master these essential commands:
 
----
-
-## ⚠️ The "Top 3 AI Hallucination Traps" Rule
-
-Each week includes a dedicated **Top 3 AI Hallucination Traps** section warning you of the exact mistakes AI tools (ChatGPT, Claude) make for that topic (e.g. giving ROS 1 `roscore` commands, swapping TF frames, or using obsolete Gazebo plugins). Check that section before running any AI code!
+| Command | What It Does | Practical Example |
+| :--- | :--- | :--- |
+| `pwd` | Displays current working directory | `pwd` |
+| `cd <path>` | Changes current directory | `cd /workspace` |
+| `ls -la` | Lists all files including hidden configurations | `ls -la` |
+| `mkdir -p <dir>` | Creates a new directory and any parent folders | `mkdir -p ~/ros2_ws/src` |
+| `source <file>` | Loads environment settings into the current shell session | `source /opt/ros/humble/setup.bash` |
+| `chmod +x <file>` | Grants executable permissions to a script | `chmod +x run_docker.sh` |
+| `export VAR=val` | Sets an environment variable | `export ROS_DOMAIN_ID=10` |
 
 ---
 
-## 🛠️ Getting Started in Under 5 Minutes
+## 2. Git & GitHub: How Teams Collaborate
 
-1. **Option A: Docker (Zero-Install)**
-   ```bash
-   cd docker
-   # On Linux:
-   ./run_docker.sh
-   # On Windows:
-   run_docker.bat
-   ```
-2. **Option B: Ubuntu Native (22.04 LTS)**
-   ```bash
-   source /opt/ros/humble/setup.bash
-   ```
+In APEX Autonomous Systems, we never edit code directly on `main`. Every feature has its own branch:
 
-3. **Navigate to the current week**:
-   ```bash
-   git checkout week-0-git-docker-linux
-   ```
+```bash
+# 1. Clone the repository
+git clone https://github.com/saifelden1/Autonomous-Systems-LP.git
+cd Autonomous-Systems-LP
+
+# 2. Create and switch to your personal task branch
+git checkout -b your-name/week-0-setup
+
+# 3. Stage changes, commit with clear message, and push
+git add .
+git commit -m "feat(setup): verify environment and docker run"
+git push -u origin your-name/week-0-setup
+```
+
+---
+
+## 3. Why Docker in Robotics?
+
+Installing ROS 2 natively on Windows or macOS can be extremely difficult due to missing Linux kernel drivers and incompatible libraries.
+**Docker** packages the entire Ubuntu OS, ROS 2 Humble/Jazzy, Gazebo, and RViz into a pre-configured sandbox that runs identically on any computer.
+
+To launch the provided container:
+```bash
+cd docker
+# On Linux:
+chmod +x run_docker.sh
+./run_docker.sh
+
+# On Windows:
+run_docker.bat
+```
+
+---
+
+## 4. Official ROS 2 Installation Steps & Useful Links
+
+If you prefer installing natively on Ubuntu instead of Docker:
+* **Ubuntu 22.04 LTS (Jammy)**: Install **ROS 2 Humble Hawksbill** ([Official Guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)).
+* **Ubuntu 24.04 LTS (Noble)**: Install **ROS 2 Jazzy Jalisco** ([Official Guide](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debians.html)).
+
+### Recommended Tools:
+* **VS Code**: Install with extensions `Python`, `C/C++`, `ROS`, and `Docker`.
+* **Terminator**: A terminal multiplexer that allows splitting your window into multiple panes (`sudo apt install -y terminator`).
+
+---
+
+## ⚠️ Top 3 AI Hallucination Traps for Week 0
+
+When asking AI (ChatGPT/Claude) for setup assistance, watch out for these 3 common hallucinations:
+
+1. **Version Mismatch Hallucination**: AI frequently attempts to install ROS 2 Humble on Ubuntu 20.04 (which only supports ROS 2 Foxy/Galactic or ROS 1 Noetic), or installs ROS 1 packages on Ubuntu 22.04. Always verify that your Ubuntu version matches your ROS 2 distro.
+2. **Missing GUI Desktop Dependencies**: AI often recommends installing `ros-humble-ros-base`, which leaves out RViz2, Gazebo, and GUI tools. Always use `ros-humble-desktop` or `ros-humble-desktop-full`.
+3. **Docker GUI Display Blindness**: AI will suggest a standard `docker run -it ubuntu bash` command without GUI forwarding flags (`-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY`). As a result, opening RViz or Gazebo will crash with `Could not connect to display`. Use our ready-made scripts in `docker/`!
