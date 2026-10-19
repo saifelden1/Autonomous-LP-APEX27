@@ -67,6 +67,14 @@ def generate_launch_description():
 
 ---
 
+## 4. Curated Open-Source Video Resources
+
+* **Nodes, Topics & Pub/Sub**: [ROS 2 Basics (Articulated Robotics)](https://www.youtube.com/watch?v=0aPbWsyS3j0) (22 mins)
+* **Python Node Implementation**: [Writing Simple Pub/Sub in Python (Robotics Back-End)](https://www.youtube.com/watch?v=cM_63A5o1-4) (14 mins)
+* **Python Launch Files**: [ROS 2 Launch Files in Python (Robotics Back-End)](https://www.youtube.com/watch?v=H7435f49uXg) (12 mins)
+
+---
+
 ## ⚠️ Top 3 AI Hallucination Traps for Week 1
 
 When asking AI (ChatGPT/Claude) for ROS 2 code, watch out for these 3 common hallucinations:
@@ -74,3 +82,10 @@ When asking AI (ChatGPT/Claude) for ROS 2 code, watch out for these 3 common hal
 1. **ROS 1 vs ROS 2 Mix-up**: AI frequently outputs deprecated ROS 1 commands like `roscore`, `rosrun`, `rostopic echo`, or imports `import rospy`. ROS 2 uses `rclpy`, `ros2 run`, and has no `roscore`!
 2. **Blocking `time.sleep()` in Callbacks**: AI will often place `time.sleep(1)` inside a subscription callback. In ROS 2's default single-threaded executor, this freezes the entire node and blocks all other topics and timers. Always use ROS 2 timers (`create_timer`) instead.
 3. **Ghost Entry Points in `setup.py`**: AI creates a Python node file but forgets to declare the entry point script in `setup.py` or omits `<depend>` tags in `package.xml`. Your code will compile, but `ros2 run` will report `Package 'xyz' doesn't have the executable`.
+
+---
+
+## 📋 Week 1 Assignment & Deliverables
+
+Follow the step-by-step instructions in [task.md](task.md) and record your results in [Template_Report.md](Template_Report.md) for your Saturday PR submission.
+
