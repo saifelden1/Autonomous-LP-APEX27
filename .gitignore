@@ -32,3 +32,9 @@ COLCON_IGNORE
 ~/.gazebo/log/
 ~/.ignition/log/
 ~/.gz/log/
+
+# Office & temporary lock files
+.~lock.*
+~$*
+generate_plan.py
+

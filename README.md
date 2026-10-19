@@ -27,28 +27,42 @@ Candidates build foundational awareness for our two competition tracks:
 
 ---
 
+## 📊 Master Onboarding Plan & Daily Schedule
+
+All daily schedules, curated open-source videos, and candidate milestones are organized in:
+* **Master Excel Sheet**: [`Apex_Autonomous_7Week_Plan.xlsx`](Apex_Autonomous_7Week_Plan.xlsx)
+* **Weekly Cadence (4 Active Days / Week)**:
+  * **Day 1 (Mon)**: Core Theory & Curated YouTube Links (1.5 hrs)
+  * **Day 2 (Wed)**: AI-Assisted Implementation Lab (2.0 hrs)
+  * **Day 3 (Fri)**: Simulation & Sensor Testing (1.5 hrs)
+  * **Day 4 (Sat)**: Deliverable Report & Pull Request (1.0 hr)
+  * *(Sun: 10-min Oral Code Defense; Tue & Thu: Buffer/Flex)*
+
+---
+
+## 🛠️ Quick Start (Zero-Friction Setup)
+
+### Step 1: Clone Repository
+```bash
+git clone https://github.com/saifelden1/Autonomous-Systems-LP.git
+cd Autonomous-Systems-LP
+```
+
+### Step 2: Start Container Environment
+* **On Windows (Double-click or run in PowerShell/CMD)**:
+  ```cmd
+  docker\run_docker.bat
+  ```
+* **On Linux / Ubuntu**:
+  ```bash
+  chmod +x docker/run_docker.sh && ./docker/run_docker.sh
+  ```
+
+*(If developing natively on Ubuntu 22.04 LTS: simply run `source /opt/ros/humble/setup.bash`)*
+
+---
+
 ## ⚠️ The "Top 3 AI Hallucination Traps" Rule
 
 Each week includes a dedicated **Top 3 AI Hallucination Traps** section warning you of the exact mistakes AI tools (ChatGPT, Claude) make for that topic (e.g. giving ROS 1 `roscore` commands, swapping TF frames, or using obsolete Gazebo plugins). Check that section before running any AI code!
 
----
-
-## 🛠️ Getting Started in Under 5 Minutes
-
-1. **Option A: Docker (Zero-Install)**
-   ```bash
-   cd docker
-   # On Linux:
-   ./run_docker.sh
-   # On Windows:
-   run_docker.bat
-   ```
-2. **Option B: Ubuntu Native (22.04 LTS)**
-   ```bash
-   source /opt/ros/humble/setup.bash
-   ```
-
-3. **Navigate to the current week**:
-   ```bash
-   git checkout week-0-git-docker-linux
-   ```

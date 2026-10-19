@@ -70,10 +70,15 @@ If you prefer installing natively on Ubuntu instead of Docker:
 
 ---
 
-## ⚠️ Top 3 AI Hallucination Traps for Week 0
+## 5. Curated Open-Source Video Resources
 
-When asking AI (ChatGPT/Claude) for setup assistance, watch out for these 3 common hallucinations:
+* **Linux CLI**: [Linux Command Line for Beginners (NetworkChuck)](https://www.youtube.com/watch?v=s3ii48qYBxA)
+* **Git & GitHub**: [Git & GitHub Tutorial for Beginners (Corey Schafer)](https://www.youtube.com/watch?v=mAFoROnOfHs)
+* **Docker**: [Docker Container Fundamentals (TechWorld with Nana)](https://www.youtube.com/watch?v=pg19Z8LLKh8)
 
-1. **Version Mismatch Hallucination**: AI frequently attempts to install ROS 2 Humble on Ubuntu 20.04 (which only supports ROS 2 Foxy/Galactic or ROS 1 Noetic), or installs ROS 1 packages on Ubuntu 22.04. Always verify that your Ubuntu version matches your ROS 2 distro.
-2. **Missing GUI Desktop Dependencies**: AI often recommends installing `ros-humble-ros-base`, which leaves out RViz2, Gazebo, and GUI tools. Always use `ros-humble-desktop` or `ros-humble-desktop-full`.
-3. **Docker GUI Display Blindness**: AI will suggest a standard `docker run -it ubuntu bash` command without GUI forwarding flags (`-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY`). As a result, opening RViz or Gazebo will crash with `Could not connect to display`. Use our ready-made scripts in `docker/`!
+---
+
+## 📋 Week 0 Assignment & Deliverables
+
+Follow the step-by-step instructions in [task.md](task.md) and document your results in [Template_Report.md](Template_Report.md) for your Saturday PR submission.
+
