@@ -36,6 +36,14 @@ A Gazebo world is defined in an XML-based **SDF (Simulation Description Format)*
 
 ---
 
+## 4. Curated Open-Source Video Resources
+
+* **Simulate Mobile Robot in Gazebo**: [How to Simulate a Mobile Robot in Gazebo (Automatic Addison)](https://youtu.be/wZV1PoZ4fyk)
+* **Customizing Gazebo Camera View**: [How to Change the Default Gazebo Camera View (Automatic Addison)](https://youtu.be/fiRRzJV1YIw)
+* **Full Robotics Series Playlist**: [Automatic Addison ROS 2 Series](https://www.youtube.com/playlist?list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt)
+
+---
+
 ## ⚠️ Top 3 AI Hallucination Traps for Week 3
 
 When asking AI (ChatGPT/Claude) for Gazebo worlds and plugins, watch out for these 3 common hallucinations:
@@ -43,3 +51,9 @@ When asking AI (ChatGPT/Claude) for Gazebo worlds and plugins, watch out for the
 1. **Deprecated Gazebo Classic vs Gazebo Sim Tags**: AI constantly confuses Gazebo Classic (plugins ending in `.so`, like `libgazebo_ros_ray_sensor.so`) with modern Ignition/Gz Sim (using system plugins `<plugin filename="ignition-gazebo-sensors-system">`). Using the wrong syntax causes Gazebo to ignore the plugin completely without any error message!
 2. **Missing SDF Sunlight & Ground**: When asked to generate a `.world` file, AI frequently forgets the `<include><uri>model://sun</uri></include>` and `<include><uri>model://ground_plane</uri></include>` tags. The result is a completely pitch-black screen where spawned robots fall into an infinite abyss.
 3. **Massless Links in Physics Simulation**: In RViz, links do not need mass. In Gazebo, any link connected via a non-fixed joint or equipped with collision geometry must have a positive `<mass>` and valid moments of inertia. If mass is zero, Gazebo will crash on startup with a physics solver division-by-zero error.
+
+---
+
+## 📋 Week 3 Assignment & Deliverables
+
+Follow the step-by-step instructions in [task.md](task.md) and record your results in [Template_Report.md](Template_Report.md) for your Saturday PR submission.

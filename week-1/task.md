@@ -8,10 +8,11 @@ Learn how ROS 2 nodes communicate by creating a telemetry publisher and subscrib
 ## 📅 4-Day Operational Schedule
 
 ### Day 1 (Mon) — Watch & Conceptualize (1.5 hrs)
-1. Watch the core open-source tutorials:
-   * [ROS 2 Basics: Nodes, Topics & Pub/Sub](https://www.youtube.com/watch?v=0aPbWsyS3j0) (Articulated Robotics - 22 min)
-   * [Writing Pub/Sub in Python](https://www.youtube.com/watch?v=cM_63A5o1-4) (Robotics Back-End - 14 min)
-   * [ROS 2 Python Launch Files](https://www.youtube.com/watch?v=H7435f49uXg) (Robotics Back-End - 12 min)
+1. Watch the curated Automatic Addison ROS 2 tutorials:
+   * [How to Create a ROS 2 Package](https://www.youtube.com/watch?v=DM77KkIJsik&list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt)
+   * [ROS 2 Publisher in Python](https://www.youtube.com/watch?v=jsVEhmXSTgc&list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt&index=2)
+   * [ROS 2 Subscriber in Python](https://youtube.com/playlist?list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt&si=Hk0_bWK0R5Ulyd_r)
+   * *(Optional C++ Reference)*: [ROS 2 Publisher in C++](https://youtu.be/EGLLMJPkzUQ) | [ROS 2 Subscriber in C++](https://youtu.be/jABgxqDxcMA)
 2. Understand the vehicle communication graph:
    * `telemetry_publisher` broadcasts vehicle health (battery voltage, sequence) to `/vehicle/telemetry`.
    * `telemetry_listener` subscribes to `/vehicle/telemetry` and logs data to console.

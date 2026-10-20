@@ -69,9 +69,12 @@ def generate_launch_description():
 
 ## 4. Curated Open-Source Video Resources
 
-* **Nodes, Topics & Pub/Sub**: [ROS 2 Basics (Articulated Robotics)](https://www.youtube.com/watch?v=0aPbWsyS3j0) (22 mins)
-* **Python Node Implementation**: [Writing Simple Pub/Sub in Python (Robotics Back-End)](https://www.youtube.com/watch?v=cM_63A5o1-4) (14 mins)
-* **Python Launch Files**: [ROS 2 Launch Files in Python (Robotics Back-End)](https://www.youtube.com/watch?v=H7435f49uXg) (12 mins)
+* **ROS 2 Package Guide**: [How to Create a ROS 2 Package (Automatic Addison)](https://www.youtube.com/watch?v=DM77KkIJsik&list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt)
+* **Python Publisher Node**: [ROS 2 Publisher in Python (Automatic Addison)](https://www.youtube.com/watch?v=jsVEhmXSTgc&list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt&index=2)
+* **Python Subscriber Node**: [ROS 2 Subscriber in Python (Automatic Addison)](https://youtube.com/playlist?list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt&si=Hk0_bWK0R5Ulyd_r)
+* **C++ Publisher Node (Bonus)**: [ROS 2 Publisher in C++ (Automatic Addison)](https://youtu.be/EGLLMJPkzUQ)
+* **C++ Subscriber Node (Bonus)**: [ROS 2 Subscriber in C++ (Automatic Addison)](https://youtu.be/jABgxqDxcMA)
+* **Full Robotics Series Playlist**: [Automatic Addison ROS 2 Series](https://www.youtube.com/playlist?list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt)
 
 ---
 
@@ -88,4 +91,3 @@ When asking AI (ChatGPT/Claude) for ROS 2 code, watch out for these 3 common hal
 ## 📋 Week 1 Assignment & Deliverables
 
 Follow the step-by-step instructions in [task.md](task.md) and record your results in [Template_Report.md](Template_Report.md) for your Saturday PR submission.
-
