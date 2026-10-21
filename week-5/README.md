@@ -1,6 +1,6 @@
 # Week 5: Perception & SLAM Fundamentals (Theoretical & Practical Exposure)
 
-Welcome to Week 5! This module provides a fast, structured, and practical overview of **Perception & SLAM** (Simultaneous Localization And Mapping).
+Welcome to Week 5! This module provides a fast, structured, and practical overview of **Perception, Sensor Fusion & SLAM** (Simultaneous Localization And Mapping).
 
 ---
 
@@ -64,6 +64,17 @@ ACTUATORS (Outputs):
 
 ---
 
+## 5. Curated Open-Source Video Resources (Logical Progression)
+
+1. **Sensors for Autonomous Robots**: [Exploring the Common Sensors for Nav2 (Automatic Addison)](https://youtu.be/VSzkBNJegS4)
+2. **Navigation Coordinate Frames**: [Understanding Coordinate Transformations for Navigation (Automatic Addison)](https://youtu.be/eDyHFa1LmpQ)
+3. **Sensor Fusion & Localization**: [Sensor Fusion and Robot Localization Using ROS 2 Jazzy (Automatic Addison)](https://youtu.be/XOQTF38lmtE)
+4. **2D Environment Mapping**: [Building a Map of the Environment Using SLAM (Automatic Addison)](https://youtu.be/VoX5AwTfHuQ)
+5. **Nav2 Installation & Setup**: [How to Install ROS 2 Navigation (Nav2) (Automatic Addison)](https://youtu.be/gyskLlvX3oI)
+* **Master Theory Playlist**: [Sensor Fusion & Tracking Tutorial Series (MATLAB Tech Talks)](https://youtube.com/playlist?list=PLn8PRpmsu08ryYoBpEKzoMOveSTyS-h4a&si=B75o2uHrgnkkt5sC)
+
+---
+
 ## ⚠️ Top 3 AI Hallucination Traps for Week 5
 
 When asking AI (ChatGPT/Claude) for SLAM and perception pipelines, watch out for these 3 common hallucinations:
@@ -71,3 +82,9 @@ When asking AI (ChatGPT/Claude) for SLAM and perception pipelines, watch out for
 1. **Duplicate `map ➔ odom` TF Broadcaster**: AI often suggests writing a custom TF node or static transform publisher for `map ➔ odom`. In any standard SLAM system, the `map ➔ odom` transform is dynamically computed and broadcasted **exclusively by the SLAM node** (`slam_toolbox` or `rtabmap`). Having a second publisher causes RViz to flicker uncontrollably between two competing world origins!
 2. **Body vs Optical Camera Coordinate Inversion**: In ROS, robot bodies follow standard engineering coordinates ($X$ forward, $Y$ left, $Z$ up), but camera optical algorithms expect the optical standard ($Z$ forward, $X$ right, $Y$ down). If AI omits the optical frame transform joint, detected 3D objects and point clouds will appear sideways or upside down.
 3. **Invalid Occupancy Grid Values**: When asked to create or manipulate `/map` messages in Python, AI often outputs integer values outside the valid range. In ROS 2, `nav_msgs/msg/OccupancyGrid` data must strictly be: `-1` (Unknown), `0` (Completely Free), or `1` to `100` (Probability of Obstacle). Using `255` or negative values other than `-1` results in completely invisible maps in RViz.
+
+---
+
+## 📋 Week 5 Assignment & Deliverables
+
+Follow the step-by-step instructions in [task.md](task.md) and record your results in [Template_Report.md](Template_Report.md) for your Saturday PR submission.

@@ -1,4 +1,4 @@
-# Week 6: Path Planning & Control Fundamentals (Theoretical & Practical Exposure)
+# Week 6: Path Planning & Control Fundamentals (Capstone Module)
 
 Welcome to Week 6! In this final module, you explore the brains of autonomous movement: **Path Planning and Motion Control**.
 
@@ -77,6 +77,16 @@ OUTPUT ACTUATION:
 
 ---
 
+## 5. Curated Open-Source Video Resources (Logical Progression)
+
+1. **Path Planning Theory (A* & RRT)**: [Path Planning with A* and RRT (MathWorks Autonomous Navigation)](https://youtu.be/QR3U1dgc5RE)
+2. **End-to-End Autonomous Navigation**: [Autonomous Navigation for a Mobile Robot Using ROS 2 Jazzy (Automatic Addison)](https://youtu.be/YzTMROP4qos)
+3. **Nav2 Python Simple Commander API**: [Getting Started With the Simple Commander API - ROS 2 Jazzy (Automatic Addison)](https://youtu.be/gKoXrrj2klg)
+4. **Target Alignment & Visual Docking**: [Autonomous Docking with AprilTags Using Nav2 - ROS 2 Jazzy (Automatic Addison)](https://youtu.be/tFE75bP-ASo)
+* **Master Robotics Series Playlist**: [Automatic Addison ROS 2 Series](https://www.youtube.com/playlist?list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt)
+
+---
+
 ## ⚠️ Top 3 AI Hallucination Traps for Week 6
 
 When asking AI (ChatGPT/Claude) for navigation and control code, watch out for these 3 common hallucinations:
@@ -84,3 +94,9 @@ When asking AI (ChatGPT/Claude) for navigation and control code, watch out for t
 1. **Unbounded Angular Velocity Spin**: AI frequently writes Pure Pursuit formulas without bounding `cmd.angular.z`. If the robot starts at a sharp angle to the path, the calculated curvature explodes, causing the vehicle to spin violently in place. Always clamp angular velocity (e.g. `cmd.angular.z = max(min(w, 1.5), -1.5)`).
 2. **Angle Discontinuity Bug ($\pm\pi$ wrap)**: When calculating heading error $\alpha = \text{target\_angle} - \text{vehicle\_yaw}$, AI often forgets to normalize $\alpha$ into $[-\pi, \pi]$. When crossing the boundary between $+180^\circ$ and $-180^\circ$, the raw difference jumps to $\approx 360^\circ$, causing the vehicle to jerk suddenly in the wrong direction.
 3. **Costmap Inflation Radius Mismatch**: In Nav2 parameter configurations, AI often suggests setting `inflation_radius` smaller than the vehicle's physical collision radius. In simulation, the planner plots routes cutting tightly through corners, causing the wheels or bumper to scrape against walls.
+
+---
+
+## 📋 Week 6 Assignment & Deliverables
+
+Follow the step-by-step instructions in [task.md](task.md) and record your results in [Template_Report.md](Template_Report.md) for your Saturday Capstone PR submission.

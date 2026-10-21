@@ -51,6 +51,16 @@ You will see `teleop_twist_keyboard` connected to `gazebo`, and `gazebo` broadca
 
 ---
 
+## 4. Curated Open-Source Video Resources
+
+* **Driving & Visualizing in RViz**: [Driving Around in Gazebo & Visualizing in RViz](https://www.youtube.com/watch?v=3iXk5hY5M7g)
+* **Teleop Twist Keyboard & /cmd_vel**: [ROS 2 Teleop Twist Keyboard & Velocity Commands](https://www.youtube.com/watch?v=8qO5sF1Y1c4)
+* **Sensor Streaming to RViz2**: [Connecting Sensors in Gazebo to RViz2](https://www.youtube.com/watch?v=7uV8hG9zM3c)
+* **Customizing Camera Angles**: [How to Change the Default Gazebo Camera View (Automatic Addison)](https://youtu.be/fiRRzJV1YIw)
+* **Full Robotics Series Playlist**: [Automatic Addison ROS 2 Series](https://www.youtube.com/playlist?list=PLNWNEEf8BvG64FVZT4IdieI1PuYnHkUrt)
+
+---
+
 ## ⚠️ Top 3 AI Hallucination Traps for Week 4
 
 When asking AI (ChatGPT/Claude) for simulation launch files and RViz configs, watch out for these 3 common hallucinations:
@@ -58,3 +68,9 @@ When asking AI (ChatGPT/Claude) for simulation launch files and RViz configs, wa
 1. **RViz Fixed Frame Disconnection**: AI frequently forgets to specify the `Fixed Frame` in RViz launch instructions or sets it to an unbroadcasted frame (e.g. `map` when no SLAM node is running). If Fixed Frame is wrong, RViz displays a global status error `Transform [sender] to [fixed_frame] does not exist` and sensor displays turn red. Always set Fixed Frame to `odom` or `base_link`.
 2. **Sensor QoS Mismatch Silence**: High-frequency Gazebo sensor plugins publish using `BestEffort` (UDP-style) QoS. If an AI generates a Python subscriber using default `Reliable` QoS, ROS 2 will silently refuse to pass messages. Always configure sensor subscribers with `rclpy.qos.qos_profile_sensor_data`.
 3. **Ghost Node Namespace Conflicts**: AI often adds random namespaces like `/my_robot/` to plugins but forgets to apply them to teleop or RViz. As a result, the robot listens on `/my_robot/cmd_vel` while teleop publishes to `/cmd_vel`, leaving the robot completely unresponsive.
+
+---
+
+## 📋 Week 4 Assignment & Deliverables
+
+Follow the step-by-step instructions in [task.md](task.md) and record your results in [Template_Report.md](Template_Report.md) for your Saturday PR submission.
