@@ -26,8 +26,8 @@ In APEX Autonomous Systems, we never edit code directly on `main`. Every feature
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/saifelden1/Autonomous-Systems-LP.git
-cd Autonomous-Systems-LP
+git clone https://github.com/saifelden1/Autonomous-LP-APEX27.git
+cd Autonomous-LP-APEX27
 
 # 2. Create and switch to your personal task branch
 git checkout -b your-name/week-0-setup

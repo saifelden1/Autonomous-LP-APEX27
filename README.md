@@ -44,8 +44,8 @@ All daily schedules, curated open-source videos, and candidate milestones are or
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/saifelden1/Autonomous-Systems-LP.git
-cd Autonomous-Systems-LP
+git clone https://github.com/saifelden1/Autonomous-LP-APEX27.git
+cd Autonomous-LP-APEX27
 ```
 
 ### Step 2: Start Container Environment

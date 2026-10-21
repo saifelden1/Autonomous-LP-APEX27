@@ -14,8 +14,8 @@ Configure and verify your workstation with modern Linux tooling, Git/GitHub vers
    * [Docker Container Fundamentals](https://www.youtube.com/watch?v=pg19Z8LLKh8) (TechWorld with Nana)
 3. Clone repository and create a personal working branch:
    ```bash
-   git clone https://github.com/saifelden1/Autonomous-Systems-LP.git
-   cd Autonomous-Systems-LP
+   git clone https://github.com/saifelden1/Autonomous-LP-APEX27.git
+   cd Autonomous-LP-APEX27
    git checkout -b your-name/week-0-setup
    ```
 
