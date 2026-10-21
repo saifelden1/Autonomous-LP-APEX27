@@ -30,7 +30,7 @@ Candidates build foundational awareness for our two competition tracks:
 ## 📊 Master Onboarding Plan & Daily Schedule
 
 All daily schedules, curated open-source videos, and candidate milestones are organized in:
-* **Master Excel Sheet**: [`Apex_Autonomous_7Week_Plan.xlsx`](Apex_Autonomous_7Week_Plan.xlsx)
+* **Master Online Syllabus & Daily Schedule**: [Apex Autonomous Systems — 7-Week Plan (Google Sheets)](https://docs.google.com/spreadsheets/d/1_--5qcV5tGVSPDrbM6lix-A-b456UNzBtC8ZENiewVs/edit)
 * **Weekly Cadence (4 Active Days / Week)**:
   * **Day 1 (Mon)**: Core Theory & Curated YouTube Links (1.5 hrs)
   * **Day 2 (Wed)**: AI-Assisted Implementation Lab (2.0 hrs)

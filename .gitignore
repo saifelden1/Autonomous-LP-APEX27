@@ -38,3 +38,4 @@ COLCON_IGNORE
 ~$*
 generate_plan.py
 
+*.xlsx

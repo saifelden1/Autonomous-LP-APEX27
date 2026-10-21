@@ -5,7 +5,7 @@ This repository contains the 7-week training track for the Apex Racing Team Auto
 It is structured for progressive hands-on mastery of ROS 2, URDF robot modeling, Gazebo physics simulation, perception, and path planning.
 
 ## Master Plan & Tracking
-* `Apex_Autonomous_7Week_Plan.xlsx`: Master syllabus and 7 daily operations sheets with 4-day active schedules and curated video links.
+* **Google Sheet**: [Apex Autonomous Systems — 7-Week Plan](https://docs.google.com/spreadsheets/d/1_--5qcV5tGVSPDrbM6lix-A-b456UNzBtC8ZENiewVs/edit) (Master syllabus and 7 daily operations sheets with 4-day active schedules and curated video links).
 
 ## Branch & Directory Layout (Option B)
 ```
