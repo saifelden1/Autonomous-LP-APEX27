@@ -14,8 +14,8 @@ Robotics software runs predominantly on Linux (Ubuntu). Master these essential c
 | `cd <path>` | Changes current directory | `cd /workspace` |
 | `ls -la` | Lists all files including hidden configurations | `ls -la` |
 | `mkdir -p <dir>` | Creates a new directory and any parent folders | `mkdir -p ~/ros2_ws/src` |
-| `source <file>` | Loads environment settings into the current shell session | `source /opt/ros/humble/setup.bash` |
-| `chmod +x <file>` | Grants executable permissions to a script | `chmod +x run_docker.sh` |
+| `source <file>` | Loads environment settings into the current shell session | `source /opt/ros/jazzy/setup.bash` |
+| `chmod +x <file>` | Grants executable permissions to a script | `chmod +x install_dependencies.sh` |
 | `export VAR=val` | Sets an environment variable | `export ROS_DOMAIN_ID=10` |
 
 ---
@@ -34,23 +34,31 @@ git checkout -b your-name/week-0-setup
 
 # 3. Stage changes, commit with clear message, and push
 git add .
-git commit -m "feat(setup): verify environment and docker run"
+git commit -m "feat(setup): verify environment and ROS 2 smoke test"
 git push -u origin your-name/week-0-setup
 ```
 
 ---
 
-## 3. Why Docker in Robotics?
+## 3. Recommended: 1-Click Native Ubuntu 24.04 Setup
 
-Installing ROS 2 natively on Windows or macOS can be extremely difficult due to missing Linux kernel drivers and incompatible libraries.
-**Docker** packages the entire Ubuntu OS, ROS 2 Humble/Jazzy, Gazebo, and RViz into a pre-configured sandbox that runs identically on any computer.
+If you are running **Ubuntu 24.04 LTS (Noble Numbat)** natively, we provide an automated installer script that configures ROS 2 Jazzy, Gazebo Harmonic, build tools, and python packages in one step:
 
-To launch the provided container:
+```bash
+chmod +x install_dependencies.sh
+./install_dependencies.sh
+```
+
+---
+
+## 4. Alternative: Docker Container Sandbox (Zero-Install)
+
+If you are on Windows or macOS and cannot dual-boot immediately, run our pre-configured Docker container:
+
 ```bash
 cd docker
 # On Linux:
-chmod +x run_docker.sh
-./run_docker.sh
+chmod +x run_docker.sh && ./run_docker.sh
 
 # On Windows:
 run_docker.bat
@@ -58,27 +66,25 @@ run_docker.bat
 
 ---
 
-## 4. Official ROS 2 Installation Steps & Useful Links
+## 5. Curated Open-Source Video Resources
 
-If you prefer installing natively on Ubuntu instead of Docker:
-* **Ubuntu 22.04 LTS (Jammy)**: Install **ROS 2 Humble Hawksbill** ([Official Guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)).
-* **Ubuntu 24.04 LTS (Noble)**: Install **ROS 2 Jazzy Jalisco** ([Official Guide](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debians.html)).
-
-### Recommended Tools:
-* **VS Code**: Install with extensions `Python`, `C/C++`, `ROS`, and `Docker`.
-* **Terminator**: A terminal multiplexer that allows splitting your window into multiple panes (`sudo apt install -y terminator`).
+* **Ubuntu 24.04 Dual Boot Guide**: [How to Dual Boot Ubuntu 24.04 LTS alongside Windows 11](https://www.youtube.com/watch?v=F0fM3f5Lw-Y) *(Learn Linux TV)*
+* **Linux CLI**: [Linux Command Line for Beginners (NetworkChuck)](https://www.youtube.com/watch?v=s3ii48qYBxA) *(20 mins)*
+* **Git & GitHub**: [Git & GitHub Tutorial for Beginners (Corey Schafer)](https://www.youtube.com/watch?v=mAFoROnOfHs) *(30 mins)*
+* **Docker**: [Docker Container Fundamentals (TechWorld with Nana)](https://www.youtube.com/watch?v=pg19Z8LLKh8) *(25 mins)*
 
 ---
 
-## 5. Curated Open-Source Video Resources
+## ⚠️ Top 3 AI Hallucination Traps for Week 0
 
-* **Linux CLI**: [Linux Command Line for Beginners (NetworkChuck)](https://www.youtube.com/watch?v=s3ii48qYBxA)
-* **Git & GitHub**: [Git & GitHub Tutorial for Beginners (Corey Schafer)](https://www.youtube.com/watch?v=mAFoROnOfHs)
-* **Docker**: [Docker Container Fundamentals (TechWorld with Nana)](https://www.youtube.com/watch?v=pg19Z8LLKh8)
+When asking AI (ChatGPT/Claude) for setup assistance, watch out for these 3 common hallucinations:
+
+1. **Version Mismatch Hallucination**: AI frequently attempts to install ROS 2 Humble on Ubuntu 24.04 (Ubuntu 24.04 uses **ROS 2 Jazzy**, while 22.04 uses **Humble**). Always verify your Ubuntu version before following AI installation steps.
+2. **Missing GUI Desktop Dependencies**: AI often recommends installing `ros-jazzy-ros-base`, which leaves out RViz2, Gazebo, and GUI tools. Always use `ros-jazzy-desktop`.
+3. **Docker GUI Display Blindness**: AI will suggest a standard `docker run -it ubuntu bash` command without GUI forwarding flags (`-v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY`). Use our ready-made scripts in `docker/`!
 
 ---
 
 ## 📋 Week 0 Assignment & Deliverables
 
 Follow the step-by-step instructions in [task.md](task.md) and document your results in [Template_Report.md](Template_Report.md) for your Saturday PR submission.
-

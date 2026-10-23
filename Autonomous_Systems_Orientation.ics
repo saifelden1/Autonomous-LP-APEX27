@@ -1,0 +1,50 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Apex Racing Team//MeetingCoordinator//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VTIMEZONE
+TZID:Africa/Cairo
+BEGIN:STANDARD
+DTSTART:20261030T000000
+TZOFFSETFROM:+0300
+TZOFFSETTO:+0200
+TZNAME:EET
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:20260424T000000
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0300
+TZNAME:EEST
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+SUMMARY:Apex Racing Team — Autonomous Systems Orientation
+DESCRIPTION:Apex Racing Team — Autonomous Systems Learning Phase Orientation\n\n📅 Date: Friday, October 23, 2026\n⏰ Time: 6:00 PM – 7:00 PM (Egypt Time / UTC+3)\n📍 Platform: Google Meet (link attached to invite)\n\nAgenda:\n1. Welcome & Introduction to Apex Racing Team Autonomous Systems Division (Formula Student AI & ERC 27)\n2. 7-Week Curriculum Roadmap Overview (ROS 2, URDF, Gazebo, Perception & Pure Pursuit Control)\n3. 4-Day Weekly Cadence, AI Prompting Policies & 1-on-1 Code Defense Protocol\n4. Development Environment Setup: Docker Sandbox & Linux Primitives\n5. Cohort Q&A & Next Steps\n\nResources:\n• GitHub Repository: https://github.com/saifelden1/Autonomous-LP-APEX27\n• Master Curriculum & Schedule: https://docs.google.com/spreadsheets/d/1_--5qcV5tGVSPDrbM6lix-A-b456UNzBtC8ZENiewVs/edit\n
+DTSTART:20261023T150000Z
+DTEND:20261023T160000Z
+LOCATION:Google Meet / Online
+STATUS:CONFIRMED
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=abdelrahmangehad583@gmail.com:mailto:abdelrahmangehad583@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=ahmedamradly555@gmail.com:mailto:ahmedamradly555@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=Hazemahmedkamal88@gmail.com:mailto:Hazemahmedkamal88@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=osirem55@gmail.com:mailto:osirem55@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=petergergesazea2@gmail.com:mailto:petergergesazea2@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=salma20071106@gmail.com:mailto:salma20071106@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=lydiasaadg47@gmail.com:mailto:lydiasaadg47@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=aymanmichael54@gmail.com:mailto:aymanmichael54@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=haneen1122005m@gmail.com:mailto:haneen1122005m@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=hosamwork2003@gmail.com:mailto:hosamwork2003@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=ahmed729551@gmail.com:mailto:ahmed729551@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=youssefamed112@gmail.com:mailto:youssefamed112@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=mo331360@gmail.com:mailto:mo331360@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=youssfs268@gmail.com:mailto:youssfs268@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=paulasamy470@gmail.com:mailto:paulasamy470@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=moaazyasser60@gmail.com:mailto:moaazyasser60@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=jihadhaggag@gmail.com:mailto:jihadhaggag@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=drahmedtariq97@gmail.com:mailto:drahmedtariq97@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=marinago01012@gmail.com:mailto:marinago01012@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=essamfadi07@gmail.com:mailto:essamfadi07@gmail.com
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=khaledmahmoud460@gmail.com:mailto:khaledmahmoud460@gmail.com
+END:VEVENT
+END:VCALENDAR

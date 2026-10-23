@@ -1,15 +1,17 @@
 # Week 0 Task: Environment Verification & Smoke Test
 
 ## 🎯 Objective
-Configure and verify your workstation with modern Linux tooling, Git/GitHub version control, Docker container isolation, and ROS 2 Humble/Jazzy runtime readiness.
+Configure and verify your workstation with Ubuntu 24.04 LTS (Dual-Boot or Docker sandbox), Git/GitHub version control, ROS 2 Jazzy, and Gazebo runtime readiness.
 
 ---
 
 ## 📅 4-Day Operational Schedule
 
-### Day 1 (Mon) — Git & Toolchain Setup (1.5 hrs)
-1. Install **Git** and **Docker Desktop** (or set up Ubuntu 22.04 LTS native dual-boot / WSL2).
-2. Curated Open-Source Tutorials:
+### Day 1 (Mon) — OS & Toolchain Setup (1.5 hrs)
+1. **Choose your setup mode**:
+   * **Preferred (Native Linux)**: Follow the [Ubuntu 24.04 Dual Boot Guide](https://www.youtube.com/watch?v=F0fM3f5Lw-Y) to install Ubuntu 24.04 alongside Windows 11.
+   * **Alternative (Docker)**: Install Docker Desktop on Windows.
+2. Watch open-source tutorials:
    * [Git & GitHub Tutorial for Beginners](https://www.youtube.com/watch?v=mAFoROnOfHs) (Corey Schafer)
    * [Docker Container Fundamentals](https://www.youtube.com/watch?v=pg19Z8LLKh8) (TechWorld with Nana)
 3. Clone repository and create a personal working branch:
@@ -27,25 +29,31 @@ Configure and verify your workstation with modern Linux tooling, Git/GitHub vers
    pwd
    ls -la
    mkdir -p test_ws/src
-   echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+   echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
    ```
 
-### Day 3 (Fri) — Container Launch & Smoke Test (1.5 hrs)
-1. Launch the APEX Autonomous Docker container:
-   * **Windows**: Run `docker/run_docker.bat`
-   * **Linux / Mac**: `chmod +x docker/run_docker.sh && ./docker/run_docker.sh`
-2. Run the ROS 2 smoke test commands inside the container terminal:
+### Day 3 (Fri) — Dependency Installation & Smoke Test (1.5 hrs)
+1. **If on Native Ubuntu 24.04**:
+   Run the 1-click automated installer script:
+   ```bash
+   chmod +x install_dependencies.sh
+   ./install_dependencies.sh
+   ```
+2. **If using Docker sandbox**:
+   * Windows: Run `docker\run_docker.bat`
+   * Linux: `chmod +x docker/run_docker.sh && ./docker/run_docker.sh`
+3. Execute ROS 2 smoke test commands:
    ```bash
    ros2 --help
    ros2 topic list
    git --version
    ```
-3. Verify that zero command errors or display connection failures occur.
+4. Verify that zero command errors occur.
 
-### Day 4 (Sat) — Report Submission & Oral Defense Prep (1.0 hr)
+### Day 4 (Sat) — Report Submission & Defense Prep (1.0 hr)
 1. Capture required verification screenshots:
    * `git status` showing your active branch.
-   * Container terminal executing `ros2 --help` and `ros2 topic list`.
+   * Terminal executing `ros2 --help` and `ros2 topic list`.
 2. Complete all sections of [Template_Report.md](Template_Report.md).
 3. Commit and push changes:
    ```bash
@@ -54,14 +62,13 @@ Configure and verify your workstation with modern Linux tooling, Git/GitHub vers
    git push -u origin your-name/week-0-setup
    ```
 4. Open a Pull Request on GitHub by Saturday 11:59 PM.
-5. Prepare for your Sunday 10-minute technical defense checkpoint.
+5. Review the 3 oral defense questions for Sunday's 10-minute checkpoint.
 
 ---
 
 ## ✅ Pass / Fail Deliverables Checklist
 
-To receive full credit and advance to Week 1:
 - [ ] Working branch named `<name>/week-0-setup` created and pushed to GitHub.
-- [ ] High-resolution screenshot of `ros2 --help` without errors attached.
-- [ ] High-resolution screenshot of `git status` attached.
+- [ ] Screenshot of `ros2 --help` without errors attached.
+- [ ] Screenshot of `git status` attached.
 - [ ] [Template_Report.md](Template_Report.md) fully filled out with debugging log and defense prep answers.
