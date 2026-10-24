@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     net-tools \
     iputils-ping \
-    libgl1-mesa-glx \
+    libgl1 \
+    libglx-mesa0 \
     libgl1-mesa-dri \
     mesa-utils \
     ros-jazzy-joint-state-publisher-gui \
