@@ -1,11 +1,10 @@
-FROM osrf/ros:humble-desktop-full
+FROM osrf/ros:jazzy-desktop-full
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV SHELL=/bin/bash
 
-# Install core build and developer tools
+# Install core build, network, GUI, and robotics developer tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-pip \
     python3-colcon-common-extensions \
     python3-rosdep \
     python3-vcstool \
@@ -19,26 +18,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1-mesa-glx \
     libgl1-mesa-dri \
     mesa-utils \
-    ros-humble-joint-state-publisher-gui \
-    ros-humble-xacro \
-    ros-humble-tf2-tools \
-    ros-humble-gazebo-ros-pkgs \
-    ros-humble-cv-bridge \
-    ros-humble-vision-msgs \
-    ros-humble-navigation2 \
-    ros-humble-nav2-bringup \
-    ros-humble-robot-localization \
+    ros-jazzy-joint-state-publisher-gui \
+    ros-jazzy-xacro \
+    ros-jazzy-tf2-tools \
+    ros-jazzy-ros-gz \
+    ros-jazzy-cv-bridge \
+    ros-jazzy-vision-msgs \
+    ros-jazzy-navigation2 \
+    ros-jazzy-nav2-bringup \
+    ros-jazzy-robot-localization \
+    python3-opencv \
+    python3-numpy \
+    python3-scipy \
+    python3-matplotlib \
     && rm -rf /var/lib/apt/lists/*
 
-# Install python dependencies for perception and testing
-RUN pip3 install --no-cache-dir \
-    numpy \
-    opencv-python \
-    scipy \
-    matplotlib
-
-# Setup ROS 2 workspace environment
-RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc
+# Setup ROS 2 workspace environment in bashrc
+RUN echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc
 
 WORKDIR /workspace
 
