@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: apex_autonomous_lp:humble
+    image: apex_autonomous_lp:jazzy
     container_name: apex_autonomous_env
     network_mode: host
     ipc: host
